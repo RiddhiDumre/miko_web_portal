@@ -1,0 +1,4173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandbox Test Student App - GSEB Prototype</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Grandstander:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5B8DEF; /* Pastel Blue */
+            --primary-hover: #4477D9; /* Slightly deeper blue */
+            --primary-light: #EEF4FF; /* Soft pastel blue bg */
+            --accent: #FF9E8A; /* Soft Coral */
+            --accent-red: #F87474; /* Soft red for errors */
+            --accent-green: #6DBFA0; /* Sage green */
+            --success: #72D4A8; /* Pastel mint green */
+            --warning: #FFE085; /* Pastel yellow */
+            --background: #F5F7FF; /* Lavender-white */
+            --surface: #FFFFFF;
+            --border: #DDE7FF;
+            --border-dark: #BCCFFF;
+            
+            --text-primary: #1E2A4A; /* Deep navy */
+            --text-secondary: #556080; /* Muted navy */
+            --text-muted: #9EAABF; /* Light slate */
+            
+            --r-lg: 24px;
+            --r-md: 16px;
+            --r-sm: 12px;
+            --card-shadow: 0 10px 30px rgba(91, 141, 239, 0.08);
+            --hover-shadow: 0 16px 40px rgba(91, 141, 239, 0.15);
+
+            /* Grade group accent colors - pastel */
+            --grade-early: #7ECBA1;     /* pastel green */
+            --grade-early-bg: #EDFAF3;
+            --grade-mid: #5B8DEF;       /* pastel blue */
+            --grade-mid-bg: #EEF4FF;
+            --grade-high: #E07B8A;      /* pastel rose */
+            --grade-high-bg: #FFEEF1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Grandstander', cursive;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* HEADER BAR (AUTHENTIC FLUTTER LOOK) */
+        .navbar {
+            height: 72px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            justify-content: space-between;
+            position: relative;
+            z-index: 50;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .miko-mini-logo {
+            width: 44px;
+            height: 44px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mini-headphones-l, .mini-headphones-r {
+            position: absolute;
+            width: 8px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        .mini-headphones-l { left: 2px; }
+        .mini-headphones-r { right: 2px; }
+        
+        .mini-headband {
+            position: absolute;
+            top: 6px;
+            width: 32px;
+            height: 6px;
+            background: #1D4ED8;
+            border-radius: 3px;
+        }
+
+        .mini-face {
+            width: 34px;
+            height: 32px;
+            background: #0F172A;
+            border-radius: 8px;
+            border: 1.5px solid #38BDF8;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 4px;
+            z-index: 5;
+        }
+
+        .mini-eye {
+            width: 6px;
+            height: 6px;
+            background: #38BDF8;
+            border-radius: 50%;
+            box-shadow: 0 0 3px #38BDF8;
+        }
+
+        .nav-title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-class-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .nav-subtitle {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        /* Center Subject Badge */
+        .nav-subject-badge {
+            background: var(--primary-light);
+            border-radius: 20px;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-subject-badge.visible {
+            opacity: 1;
+        }
+
+        .subject-emoji-container {
+            width: 22px;
+            height: 22px;
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .subject-meta-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .subject-label {
+            font-size: 8px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .subject-val {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Timer display */
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .timer-container.visible {
+            opacity: 1;
+        }
+
+        .timer-container.urgent {
+            background: #FEE2E2;
+            color: var(--accent-red);
+            border: 1.5px solid var(--accent-red);
+        }
+
+        .corner-timer-box {
+            background: #EFF6FF;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 99px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            border: 1.5px solid var(--border-dark);
+            font-family: monospace;
+        }
+
+        .corner-timer-box.urgent {
+            background: #FEE2E2;
+            color: var(--accent-red);
+            border: 1.5px solid var(--accent-red);
+            animation: pulse-timer-scale 0.8s infinite alternate;
+        }
+
+        @keyframes pulse-timer-scale {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            background: #F1F5F9;
+            border-radius: 20px;
+            padding: 3px;
+            display: flex;
+            cursor: pointer;
+        }
+
+        .lang-btn {
+            padding: 5px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-exit {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-decoration: none;
+            background: #F1F5F9;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-exit:hover {
+            background: #E2E8F0;
+            color: var(--text-primary);
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-viewport {
+            flex: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* SCREEN CONTAINER */
+        .screen-container {
+            width: 100%;
+            height: 100%;
+            display: none;
+            animation: fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .screen-container.active {
+            display: block;
+        }
+
+        /* SCREEN 1: SIMPLIFIED GRADE SELECTOR OVERLAY */
+        .grade-selector-modal {
+            background: var(--surface);
+            border-radius: var(--r-lg);
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 900px;
+            padding: 40px;
+            margin: 0 auto;
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.06);
+            text-align: center;
+        }
+
+        .selector-header {
+            margin-bottom: 32px;
+        }
+
+        .selector-title {
+            font-family: 'Grandstander', cursive;
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .selector-title span {
+            color: var(--primary);
+        }
+
+        .selector-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin: 8px auto 0;
+            line-height: 1.5;
+        }
+
+        .selector-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .selector-cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .grade-card {
+            background: var(--surface);
+            border: 2.5px solid var(--border);
+            border-radius: 28px;
+            padding: 40px 28px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 260px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grade-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(91, 141, 239, 0.15);
+        }
+
+        .grade-number {
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            font-family: 'Grandstander', cursive;
+        }
+
+        .grade-title-card {
+            font-family: 'Grandstander', cursive;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 28px;
+        }
+
+        .grade-select-btn {
+            color: white;
+            border: none;
+            width: 100%;
+            max-width: 180px;
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 800;
+            font-family: 'Grandstander', cursive;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+        }
+
+        .grade-card.early { border-color: var(--grade-early); background: var(--grade-early-bg); }
+        .grade-card.early .grade-number { color: var(--grade-early); }
+        .grade-card.early .grade-select-btn { background: var(--grade-early); box-shadow: 0 6px 18px rgba(126, 203, 161, 0.35); }
+        .grade-card.early:hover { border-color: var(--grade-early); }
+        .grade-card.early:hover .grade-select-btn { background: #5fba8a; }
+
+        .grade-card.reasoners { border-color: var(--grade-mid); background: var(--grade-mid-bg); }
+        .grade-card.reasoners .grade-number { color: var(--grade-mid); }
+        .grade-card.reasoners .grade-select-btn { background: var(--grade-mid); box-shadow: 0 6px 18px rgba(91, 141, 239, 0.35); }
+        .grade-card.reasoners:hover { border-color: var(--grade-mid); }
+        .grade-card.reasoners:hover .grade-select-btn { background: var(--primary-hover); }
+
+        .grade-card.abstract { border-color: var(--grade-high); background: var(--grade-high-bg); }
+        .grade-card.abstract .grade-number { color: var(--grade-high); }
+        .grade-card.abstract .grade-select-btn { background: var(--grade-high); box-shadow: 0 6px 18px rgba(224, 123, 138, 0.35); }
+        .grade-card.abstract:hover { border-color: var(--grade-high); }
+        .grade-card.abstract:hover .grade-select-btn { background: #c86070; }
+
+        /* SCREEN 2: AUTHENTIC STUDENT PROFILE DASHBOARD */
+        .dashboard-split-layout {
+            display: grid;
+            grid-template-columns: 7fr 3fr;
+            gap: 24px;
+            width: 100%;
+            height: calc(100vh - 120px);
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-split-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow-y: auto;
+            }
+        }
+
+        .main-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Now Assessing Card (Light Blue/Lavender Theme) */
+        .now-assessing-card {
+            background: var(--primary-light);
+            border: 1.5px solid var(--border-dark);
+            border-radius: var(--r-lg);
+            padding: 24px;
+            height: 240px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .now-assessing-badge {
+            position: absolute;
+            top: 16px;
+            left: 24px;
+            background: var(--primary);
+            color: white;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .now-assessing-inner {
+            display: flex;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .student-avatar-big-glow {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 4px solid var(--surface);
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+            position: relative;
+        }
+
+        .student-avatar-big {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236B58F8"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>') no-repeat center;
+            background-size: 80%;
+        }
+
+        .now-assessing-details {
+            flex-grow: 1;
+            margin-left: 24px;
+        }
+
+        .student-name-big {
+            font-family: 'Grandstander', cursive;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-primary);
+            line-height: 1.1;
+        }
+
+        .student-roll-big {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        .btn-start-assess {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 16px 36px;
+            border-radius: var(--r-md);
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(87, 204, 153, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-start-assess:hover {
+            box-shadow: 0 6px 20px rgba(87, 204, 153, 0.4);
+            transform: scale(1.02);
+        }
+
+        .btn-start-assess svg {
+            fill: white;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Student Grid area */
+        .students-section-label {
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-top: 8px;
+        }
+
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 16px;
+        }
+
+        .student-tile-card {
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            border-radius: var(--r-lg);
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .student-avatar-tile {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #f1f5f9 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%236B58F8"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>') no-repeat center;
+            background-size: 80%;
+            margin-bottom: 8px;
+        }
+
+        .student-name-tile {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .student-roll-tile {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .btn-skip-tile {
+            background: var(--primary-light);
+            border: none;
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-skip-tile:hover {
+            background: #dbd7ff;
+        }
+
+        /* Right Column Side Panel */
+        .right-side-panel {
+            background: #EEF2F6;
+            border-radius: var(--r-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .skipped-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            color: var(--text-primary);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .skipped-empty-state {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .skipped-empty-emoji {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        /* Buffer Calendar Card */
+        .buffer-alert-card {
+            background: var(--primary-light);
+            border-radius: 18px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .buffer-text-container {
+            flex-grow: 1;
+        }
+
+        .buffer-title {
+            font-size: 12px;
+            font-weight: 900;
+            color: #1e3a8a;
+        }
+
+        .buffer-desc {
+            font-size: 10px;
+            font-weight: 700;
+            color: #2563eb;
+            line-height: 1.3;
+            margin-top: 2px;
+        }
+
+        .calendar-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            border: 1.5px solid #BFDBFE;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.05);
+        }
+
+        .calendar-top {
+            height: 12px;
+            background: var(--primary);
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .calendar-ring {
+            width: 3px;
+            height: 6px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 1px;
+        }
+
+        .calendar-face {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .calendar-eyes {
+            display: flex;
+            gap: 6px;
+        }
+
+        .calendar-eye {
+            width: 4px;
+            height: 4px;
+            background: #1e293b;
+            border-radius: 50%;
+        }
+
+        .calendar-smile {
+            font-size: 8px;
+            line-height: 1.0;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        /* PLAYFUL FOOTER */
+        .playful-footer {
+            height: 52px;
+            background: #F1F5F9;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            z-index: 50;
+            width: 100%;
+        }
+
+        .footer-mascot {
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-mascot-headphones {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: white;
+            font-size: 16px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+        }
+
+        .footer-audio-waves {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+            margin-left: 6px;
+        }
+
+        .footer-wave {
+            width: 2px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 1px;
+        }
+
+        .footer-wave:nth-child(2) { height: 12px; }
+        .footer-wave:nth-child(3) { height: 16px; }
+
+        .footer-text {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        /* SCREEN 3: QUIZ ARENA (QUIZLET-STYLE CARD DECK) */
+        .quiz-single-layout {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Centered Quizlet Flashcard */
+        .answer-arena {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 520px;
+            height: auto;
+        }
+
+        .arena-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .arena-steps-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-secondary);
+        }
+
+        .arena-subject-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 99px;
+            text-transform: uppercase;
+        }
+
+        .progress-bar-bg {
+            height: 6px;
+            background: #f1f5f9;
+            border-radius: 99px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 25%;
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Question Box (Front of Flashcard) */
+        .question-card {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin-bottom: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+            position: relative;
+        }
+
+        .question-text {
+            font-family: 'Grandstander', cursive;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.45;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-speak-question {
+            background: var(--primary);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+            transition: all 0.2s;
+        }
+
+        .btn-speak-question:hover {
+            transform: scale(1.08);
+            background: var(--primary-hover);
+        }
+
+        .btn-speak-question svg {
+            fill: white;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* DYNAMIC INTERFACE ZONE */
+        .interface-zone {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 32px;
+            min-height: 220px;
+        }
+
+        /* 1. Touch MCQ Choices (Quizlet-style card options) */
+        .mcq-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .mcq-option {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 18px;
+            padding: 16px 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .mcq-option:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .mcq-option.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px rgba(91, 141, 239, 0.15);
+        }
+
+        .mcq-star {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 50%;
+            background: var(--background);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: 'Grandstander', cursive;
+            border: 1.5px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .mcq-option.selected .mcq-star {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .mcq-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Grandstander', cursive;
+        }
+
+        /* Touch Images MCQ (Early Learners) */
+        .image-mcq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .image-option {
+            background: white;
+            border: 2.5px solid var(--border);
+            border-radius: 22px;
+            padding: 24px 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .image-option:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .image-option.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(91, 141, 239, 0.18);
+        }
+
+        .image-graphic {
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .image-option:hover .image-graphic {
+            transform: scale(1.1);
+        }
+
+        .image-label {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: 'Grandstander', cursive;
+        }
+
+        /* 2. Drag & Drop Sorting */
+        .drag-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .drag-source-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 12px;
+            background: var(--background);
+            border: 2.2px dashed var(--border-dark);
+            border-radius: var(--r-md);
+            min-height: 60px;
+        }
+
+        .drag-tile {
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            padding: 8px 16px;
+            border-radius: var(--r-sm);
+            font-size: 13px;
+            font-weight: 800;
+            cursor: grab;
+            color: var(--text-primary);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.04);
+            touch-action: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: border-color 0.2s, transform 0.1s;
+        }
+
+        .drag-tile:hover {
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .drag-tile:active {
+            cursor: grabbing;
+        }
+
+        .buckets-container {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .bucket {
+            flex: 1;
+            background: var(--background);
+            border: 2px dashed var(--border-dark);
+            border-radius: var(--r-md);
+            padding: 16px;
+            min-height: 120px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .bucket.dragover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .bucket-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        /* Draggable Sequencing */
+        .seq-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .seq-tile {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 12px 16px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            touch-action: none;
+        }
+
+        .seq-tile:active {
+            cursor: grabbing;
+        }
+
+        .seq-index {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--surface);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .seq-text {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .seq-tile-grip {
+            margin-left: auto;
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        /* 3. Voice Microphone Recorder */
+        .voice-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .voice-illustration {
+            border-radius: var(--r-md);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+            display: none;
+        }
+
+        .voice-illustration img {
+            display: block;
+            max-height: 120px;
+            object-fit: cover;
+        }
+
+        .voice-illust-placeholder {
+            width: 180px;
+            height: 100px;
+            border-radius: var(--r-md);
+            background: var(--primary-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid var(--border-dark);
+            font-size: 26px;
+            margin-bottom: 8px;
+            gap: 4px;
+        }
+
+        .voice-illust-placeholder span {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .mic-button-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 10px auto;
+        }
+
+        .mic-countdown-svg {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 90px;
+            height: 90px;
+            transform: rotate(-90deg);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .mic-countdown-bg {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 5;
+        }
+
+        .mic-countdown-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-dasharray: 276.46;
+            stroke-dashoffset: 276.46;
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        .mic-btn.recording ~ .mic-countdown-svg .mic-countdown-progress {
+            stroke: var(--accent-red);
+        }
+
+        .mic-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(91, 141, 239, 0.3);
+            z-index: 10;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 10px 28px rgba(91, 141, 239, 0.45);
+        }
+
+        .mic-btn.recording {
+            background: #F87474;
+            box-shadow: 0 6px 24px rgba(248, 116, 116, 0.4);
+            animation: mic-breathe 1.5s ease-in-out infinite;
+        }
+
+        @keyframes mic-breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        .mic-btn svg {
+            fill: white;
+            width: 32px;
+            height: 32px;
+        }
+
+        .mic-pulse-ring {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 3px solid rgba(248, 116, 116, 0.4);
+            border-radius: 50%;
+            z-index: 1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .mic-btn.recording + .mic-pulse-ring {
+            animation: pulse-ring 1.2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.7); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+
+        .voice-status-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-family: 'Grandstander', cursive;
+            margin-top: 4px;
+        }
+
+        .voice-status-text.active {
+            color: #F87474;
+        }
+
+        /* Transcription input bar */
+        .transcription-box {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 18px;
+            font-size: 14px;
+            font-style: italic;
+            color: var(--text-secondary);
+            min-height: 48px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Grandstander', cursive;
+            transition: border-color 0.2s;
+        }
+
+        .transcription-box.has-text {
+            border-color: var(--primary);
+            color: var(--text-primary);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        .btn-submit-sr {
+            margin-top: 14px;
+            padding: 12px 28px;
+            font-size: 14px;
+            font-weight: 800;
+            font-family: 'Grandstander', cursive;
+            color: white;
+            background: var(--success);
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(114, 212, 168, 0.35);
+            transition: all 0.2s;
+            width: 100%;
+            max-width: 280px;
+            text-align: center;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-submit-sr:hover {
+            background: #5cbf96;
+            box-shadow: 0 6px 20px rgba(114, 212, 168, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Fraction and algebra visuals */
+        .visual-aid-panel {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .chocolate-visual {
+            display: flex;
+            border: 3px solid var(--accent);
+            border-radius: 12px;
+            overflow: hidden;
+            width: 200px;
+            height: 52px;
+            background: white;
+            box-shadow: 0 4px 10px rgba(255, 133, 95, 0.15);
+        }
+
+        .chocolate-block {
+            flex: 1;
+            margin: 2px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .chocolate-block.brown { background: #78350f; }
+        .chocolate-block.light { background: #fed7aa; }
+
+        .algebra-visual {
+            font-family: 'monospace';
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+            padding: 16px;
+            background: var(--background);
+            border: 1.5px solid var(--border-dark);
+            border-radius: var(--r-md);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .algebra-step {
+            padding: 6px 16px;
+            border-radius: var(--r-sm);
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .algebra-step:hover {
+            background: var(--surface);
+            border-color: var(--border-dark);
+        }
+
+        .algebra-step.selected {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* Grammar interactive sentence */
+        .grammar-visual {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .grammar-word {
+            padding: 8px 16px;
+            background: var(--background);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-sm);
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .grammar-word:hover {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
+        .grammar-word.selected {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* bottom action panel */
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .btn-action-outline {
+            padding: 10px 24px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: 'Grandstander', cursive;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-action-outline:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-action-primary {
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 800;
+            font-family: 'Grandstander', cursive;
+            border: none;
+            color: white;
+            background: var(--primary);
+            box-shadow: 0 4px 14px rgba(91, 141, 239, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-action-primary:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 6px 18px rgba(91, 141, 239, 0.45);
+            transform: translateY(-2px);
+        }
+
+        /* SCREEN 4: CELEBRATION MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 23, 56, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .celebration-box {
+            background: var(--surface);
+            color: var(--text-primary);
+            width: 92%;
+            max-width: 520px;
+            border-radius: 32px;
+            padding: 40px 36px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(91, 141, 239, 0.2);
+            border: 2px solid var(--border);
+            transform: scale(0.88);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.active .celebration-box {
+            transform: scale(1);
+        }
+
+        .celeb-trophy {
+            font-size: 64px;
+            margin-bottom: 8px;
+            display: block;
+            animation: trophy-bounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+        }
+
+        @keyframes trophy-bounce {
+            from { transform: scale(0) rotate(-15deg); opacity: 0; }
+            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .celeb-title {
+            font-family: 'Grandstander', cursive;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 0.02em;
+            margin-bottom: 8px;
+        }
+
+        .celeb-subtitle {
+            font-family: 'Grandstander', cursive;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .celeb-desc {
+            font-size: 14px;
+            font-family: 'Grandstander', cursive;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .celeb-score-ring {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            border: 4px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+            animation: score-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s both;
+        }
+
+        @keyframes score-pop {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .celeb-score-num {
+            font-family: 'Grandstander', cursive;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .celeb-score-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .celeb-badges {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            font-size: 38px;
+        }
+
+        .btn-finish {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            font-family: 'Grandstander', cursive;
+            font-size: 16px;
+            font-weight: 800;
+            border: none;
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 6px 18px rgba(91, 141, 239, 0.35);
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-finish:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 8px 22px rgba(91, 141, 239, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* UTILITY ANIMATIONS */
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scale-up {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR (Light Theme) -->
+    <header class="navbar">
+        <div class="nav-left">
+            <div class="miko-mini-logo">
+                <div class="mini-headband"></div>
+                <div class="mini-headphones-l"></div>
+                <div class="mini-headphones-r"></div>
+                <div class="mini-face">
+                    <div class="mini-eye"></div>
+                    <div class="mini-eye"></div>
+                </div>
+            </div>
+            <div class="nav-title-group">
+                <span class="nav-class-title" id="nav-class-header">Miko Test</span>
+                <span class="nav-subtitle" id="nav-smartboard-sub">Smart Board Assessment</span>
+            </div>
+        </div>
+
+        <div id="nav-subject-node" class="nav-subject-badge">
+            <div class="subject-emoji-container" id="subject-emoji">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
+            <div class="subject-meta-text">
+                <span class="subject-label" id="subject-label-tag">This week's subject</span>
+                <span class="subject-val" id="subject-name-tag">Mathematics</span>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <!-- Timer -->
+            <div id="quiz-timer" class="timer-container">
+                <svg viewBox="0 0 24 24" width="14" height="14" style="fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span id="timer-text">03:00</span>
+            </div>
+
+            <!-- Language Toggle -->
+            <div class="lang-toggle" onclick="toggleLanguage()">
+                <div id="lang-en" class="lang-btn active">English</div>
+                <div id="lang-gu" class="lang-btn">ગુજરાતી</div>
+            </div>
+
+            <button class="btn-exit" onclick="confirmExit()">Exit Portal</button>
+        </div>
+    </header>
+
+    <!-- VIEWPORT -->
+    <main class="main-viewport">
+        
+        <!-- SCREEN 1: CLASSROOM GRADE SELECTOR OVERLAY (SIMPLIFIED) -->
+        <section id="screen-selector" class="screen-container active">
+            <div class="grade-selector-modal">
+                <div class="selector-header">
+                    <h1 class="selector-title">Select <span>Grade Group</span></h1>
+                </div>
+
+                <div class="selector-cards-grid">
+                    <!-- Grade 1-3 -->
+                    <div class="grade-card early" onclick="selectGradeGroup('1-3')">
+                        <div class="grade-number">1–3</div>
+                        <h2 class="grade-title-card">Grades 1–3</h2>
+                        <button class="grade-select-btn" id="grade-btn-1-3">Select</button>
+                    </div>
+
+                    <!-- Grade 4-6 -->
+                    <div class="grade-card reasoners" onclick="selectGradeGroup('4-6')">
+                        <div class="grade-number">4–6</div>
+                        <h2 class="grade-title-card">Grades 4–6</h2>
+                        <button class="grade-select-btn" id="grade-btn-4-6">Select</button>
+                    </div>
+
+                    <!-- Grade 7-9 -->
+                    <div class="grade-card abstract" onclick="selectGradeGroup('7-9')">
+                        <div class="grade-number">7–9</div>
+                        <h2 class="grade-title-card">Grades 7–9</h2>
+                        <button class="grade-select-btn" id="grade-btn-7-9">Select</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: AUTHENTIC STUDENT PROFILE DASHBOARD -->
+        <section id="screen-profile" class="screen-container">
+            <div class="dashboard-split-layout">
+                
+                <!-- Left Main Column -->
+                <div class="main-column">
+                    <!-- Now Assessing Card -->
+                    <div class="now-assessing-card">
+                        <span class="now-assessing-badge" id="now-assessing-badge-text">Now Assessing</span>
+                        <div class="now-assessing-inner">
+                            <div class="student-avatar-big-glow">
+                                <div class="student-avatar-big"></div>
+                            </div>
+                            <div class="now-assessing-details">
+                                <h1 class="student-name-big" id="student-name-header">Test Candidate</h1>
+                                <div class="student-roll-big" id="student-roll-header">Roll No. 99</div>
+                                
+                                <div style="margin-top: 16px;">
+                                    <button class="btn-start-assess" onclick="startQuizAssessment()">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        <span id="start-btn-txt">Start Assessment</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Students Today list label -->
+                    <div class="students-section-label" id="students-today-lbl">Students Today (1)</div>
+                    
+                    <!-- Single student tile grid -->
+                    <div class="students-grid">
+                        <div class="student-tile-card">
+                            <div class="student-avatar-tile"></div>
+                            <div class="student-name-tile" id="student-tile-name">Test Candidate</div>
+                            <div class="student-roll-tile" id="student-tile-roll">Roll No. 99</div>
+                            <button class="btn-skip-tile" onclick="skipStudentFromHome()">
+                                ⏭️ <span id="skip-btn-txt">Skip</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column Side Panel -->
+                <div class="right-side-panel">
+                    <div class="skipped-header" style="display: flex; align-items: center; gap: 4px;">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-red);"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+                        <span id="skipped-label">Skipped Today (0)</span>
+                    </div>
+                    
+                    <div id="skipped-list-box" class="skipped-empty-state">
+                        <div class="skipped-empty-emoji" style="display: flex; justify-content: center; align-items: center;">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary); opacity:0.5;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        </div>
+                        <div id="no-skipped-txt">No skipped children!</div>
+                    </div>
+
+                    <!-- Buffer Alert Card -->
+                    <div class="buffer-alert-card">
+                        <div class="buffer-text-container">
+                            <div class="buffer-title" id="buffer-header">Don't worry!</div>
+                            <div class="buffer-desc" id="buffer-body">We will assess them on the next buffer day.</div>
+                        </div>
+                        <div class="calendar-icon">
+                            <div class="calendar-top">
+                                <div class="calendar-ring"></div>
+                                <div class="calendar-ring"></div>
+                            </div>
+                            <div class="calendar-face">
+                                <div class="calendar-eyes">
+                                    <div class="calendar-eye"></div>
+                                    <div class="calendar-eye"></div>
+                                </div>
+                                <div class="calendar-smile">◡</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SCREEN 3: QUIZ RUNNER (SINGLE COLUMN - NO MASCOT PANEL ON LEFT) -->
+        <section id="screen-quiz" class="screen-container">
+            <div class="quiz-single-layout">
+                
+                <!-- Answer Arena -->
+                <div class="answer-arena">
+                    <div>
+                        <div class="arena-top">
+                            <span id="question-progress" class="arena-steps-text">Question 1 of 4</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div id="quiz-corner-timer" class="corner-timer-box">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" style="fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    <span id="corner-timer-text">03:00</span>
+                                </div>
+                                <span id="arena-subject" class="arena-subject-badge">Mathematics</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div id="progress-indicator" class="progress-bar-fill"></div>
+                        </div>
+
+                        <!-- Question Prompt -->
+                        <div class="question-card">
+                            <div id="question-text" class="question-text">
+                                Question text will load here.
+                            </div>
+                            <button class="btn-speak-question" onclick="speakCurrentQuestionText()" title="Hear Question">
+                                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Visual aids if needed -->
+                        <div id="visual-aid-container" class="visual-aid-panel" style="display:none;">
+                            <!-- Chocolate fractional aid or math formula -->
+                        </div>
+
+                        <!-- Interactive Answers Area -->
+                        <div id="dynamic-interface-zone" class="interface-zone">
+                            <!-- Dynamic content injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Navigation Action panel -->
+                    <div class="action-row">
+                        <button id="btn-back-question" class="btn-action-outline" onclick="previousQuestion()">Back</button>
+                        <button id="btn-skip-question" class="btn-action-outline" onclick="skipQuestion()">Skip Question</button>
+                        <button id="btn-next-question" class="btn-action-primary" onclick="submitAnswerAndNext()">Next Question ➔</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PLAYFUL FOOTER (AUTHENTIC LOOK) -->
+    <footer class="playful-footer" id="main-playful-footer">
+        <div class="footer-mascot">
+            <div class="footer-mascot-headphones" style="display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" width="20" height="20" style="fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; color:var(--primary);"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M12 2v4"></path><path d="M8 5h8"></path><circle cx="8" cy="16" r="1"></circle><circle cx="16" cy="16" r="1"></circle></svg>
+            </div>
+            <div class="footer-audio-waves">
+                <div class="footer-wave"></div>
+                <div class="footer-wave"></div>
+                <div class="footer-wave"></div>
+            </div>
+        </div>
+        <span class="footer-text" id="footer-instruction-text">Select Grade Group to begin Sandbox assessment.</span>
+    </footer>
+
+    <!-- SCREEN 4: CELEBRATION MODAL -->
+    <div id="modal-celebration" class="modal-overlay">
+        <div class="celebration-box">
+            <span class="celeb-trophy">🏆</span>
+            <div class="celeb-title" id="celeb-complete-title">Quiz Complete!</div>
+            <div class="celeb-subtitle" id="celeb-grade-header">Grade Group Finished</div>
+
+            <div class="celeb-score-ring">
+                <div class="celeb-score-num" id="celeb-score-num">15</div>
+                <div class="celeb-score-label">Questions</div>
+            </div>
+
+            <div class="celeb-desc" id="celeb-summary">
+                Amazing effort! You answered all 15 questions. Your responses have been recorded.
+            </div>
+            <button class="btn-finish" id="btn-celeb-finish" onclick="finishAssessmentSandbox()">Back to Home</button>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT CONTROLLER -->
+    <script>
+        // Language state
+        let currentLanguage = 'en'; // 'en' or 'gu'
+
+        // Active grade group and assessment state
+        let currentGradeGroup = ''; // '1-3', '4-6', '7-9'
+        let currentQuestionIdx = 0;
+        let selectedAnswers = [];
+        let score = 0;
+        let timerInterval = null;
+        let timeLeft = 180; // 3 minutes in seconds
+        let isStudentSkipped = false;
+        
+        // Voice synthesis / recognition states
+        let isSpeakingState = false;
+        let isRecordingState = false;
+        let voiceRecognition = null;
+        let ttsCancel = false;
+
+        // Custom transcribing emulator fallback
+        let autoTranscribeTimeout = null;
+        let shouldAutoStartMicAfterSpeaking = false;
+        let micCountdownInterval = null;
+
+        // Translation Map
+        const translations = {
+            en: {
+                intro_title: "Select <span>Grade Group</span>",
+                intro_sub: "Choose a grade level to configure the sandbox.",
+                early_title: "Grades 1–3",
+                early_desc: "Grades 1–3",
+                early_btn: "Select",
+                reasoners_title: "Grades 4–6",
+                reasoners_desc: "Grades 4–6",
+                reasoners_btn: "Select",
+                abstract_title: "Grades 7–9",
+                abstract_desc: "Grades 7–9",
+                abstract_btn: "Select",
+                
+                exitConfirm: "Are you sure you want to quit the assessment?",
+                start: "Start Assessment",
+                back: "Back",
+                skip: "Skip Question",
+                next: "Next Question ➔",
+                finish: "Back to Portal Home",
+                assessComplete: "ASSESSMENT COMPLETE!",
+                classRoll: "Roll No. 99",
+                candidate: "Test Candidate",
+                speaking: "AI Speaking...",
+                listening: "Listening... speak now",
+                tapMic: "Tap mic, or wait for simulation rescue",
+                simText: "[AI Voice Simulation rescued]: Student has provided response.",
+                living: "Living",
+                nonliving: "Non-Living",
+                solid: "Solid",
+                liquid: "Liquid",
+                gas: "Gas",
+                qTitle: "Question",
+                
+                now_assessing_badge: "Now Assessing",
+                students_today_lbl: "Students Today",
+                skip_btn_txt: "Skip",
+                skipped_label: "Skipped Today",
+                no_skipped_txt: "No skipped children!",
+                buffer_header: "Don't worry!",
+                buffer_body: "We will assess them on the next buffer day.",
+                footer_default: "Select Grade Group to begin Sandbox assessment.",
+                footer_profile: "Call the child to the board and tap Start Assessment.",
+                footer_quiz: "Follow instructions and answer using touch, drag, or voice.",
+                mark_present: "Mark Present",
+                celeb_desc: "All evaluation stages have been successfully run! Results and performance markers have been logged and synced."
+            },
+            gu: {
+                intro_title: "ગ્રેડ <span>જૂથ પસંદ કરો</span>",
+                intro_sub: "મૂલ્યાંકન કરવા માટે નીચે આપેલા ગ્રેડ જૂથમાંથી એક પસંદ કરો.",
+                early_title: "ધોરણ ૧–૩",
+                early_desc: "ધોરણ ૧–૩",
+                early_btn: "પસંદ કરો",
+                reasoners_title: "ધોરણ ૪–૬",
+                reasoners_desc: "ધોરણ ૪–૬",
+                reasoners_btn: "પસંદ કરો",
+                abstract_title: "ધોરણ ૭–૯",
+                abstract_desc: "ધોરણ ૭–૯",
+                abstract_btn: "પસંદ કરો",
+                
+                exitConfirm: "શું તમે ખરેખર આ મૂલ્યાંકનમાંથી બહાર નીકળવા માંગો છો?",
+                start: "મૂલ્યાંકન શરૂ કરો",
+                back: "પાછા જાઓ",
+                skip: "પ્રશ્ન છોડો",
+                next: "આગળનો પ્રશ્ન ➔",
+                finish: "પોર્ટલ હોમ પર પાછા",
+                assessComplete: "મૂલ્યાંકન પૂર્ણ!",
+                classRoll: "રોલ નં. 99",
+                candidate: "પરીક્ષણ વિદ્યાર્થી",
+                speaking: "મશીન બોલી રહ્યું છે...",
+                listening: "સાંભળી રહ્યું છે... હવે બોલો",
+                tapMic: "માઇક ટેપ કરો અથવા વાણી અનુકરણની રાહ જુઓ",
+                simText: "[વાણી સિમ્યુલેશન]: વિદ્યાર્થીએ મૌખિક જવાબ આપ્યો છે.",
+                living: "સજીવ",
+                nonliving: "નિર્જીવ",
+                solid: "ઘન",
+                liquid: "પ્રવાહી",
+                gas: "વાયુ",
+                qTitle: "પ્રશ્ન",
+                
+                now_assessing_badge: "હાલનું મૂલ્યાંકન",
+                students_today_lbl: "આજના વિદ્યાર્થીઓ",
+                skip_btn_txt: "છોડી દો",
+                skipped_label: "આજે છોડેલા",
+                no_skipped_txt: "કોઈ બાળક છોડવામાં આવ્યું નથી!",
+                buffer_header: "ચિંતા કરશો નહીં!",
+                buffer_body: "આપણે આવતા બફર દિવસે તેમનું મૂલ્યાંકન કરીશું.",
+                footer_default: "મૂલ્યાંકન શરૂ કરવા માટે ગ્રેડ જૂથ પસંદ કરો.",
+                footer_profile: "બાળકને બોર્ડ પર બોલાવો અને મૂલ્યાંકન શરૂ કરો દબાવો.",
+                footer_quiz: "સૂચનાઓનું પાલન કરો અને ટચ, ડ્રેગ અથવા અવાજથી જવાબ આપો.",
+                mark_present: "હાજર કરો",
+                celeb_desc: "મૂલ્યાંકનના તમામ તબક્કાઓ સફળતાપૂર્વક પૂર્ણ થયા છે! પરિણામો લૉગ અને સિંક કરવામાં આવ્યા છે."
+            }
+        };
+
+        // QUIZ DATA STRUCTURE FOR THE THREE GRADE GROUPS
+        const quizzes = {
+            '1-3': [
+                {
+                    id: 'e1',
+                    subject: 'Science',
+                    type: 'touch-image',
+                    text_en: "Tap the animal that lives in water.",
+                    text_gu: "પાણીમાં રહેતા પ્રાણી પર ટેપ કરો.",
+                    options: [
+                        { label: 'Lion', value: 'lion', correct: false },
+                        { label: 'Fish', value: 'fish', correct: true },
+                        { label: 'Eagle', value: 'eagle', correct: false }
+                    ]
+                },
+                {
+                    id: 'e2',
+                    subject: 'Language',
+                    type: 'touch-odd',
+                    text_en: "Tap the item that is NOT an animal.",
+                    text_gu: "જે પ્રાણી નથી તે વસ્તુ પર ટેપ કરો.",
+                    options: [
+                        { label: 'Dog', value: 'dog', correct: false },
+                        { label: 'Cat', value: 'cat', correct: false },
+                        { label: 'Rose', value: 'rose', correct: true },
+                        { label: 'Fish', value: 'fish', correct: false }
+                    ]
+                },
+                {
+                    id: 'e3',
+                    subject: 'Science',
+                    type: 'drag-buckets',
+                    text_en: "Sort the items into Living and Non-living buckets.",
+                    text_gu: "સજીવ અને નિર્જીવ વસ્તુઓને વર્ગીકૃત કરો.",
+                    buckets: [
+                        { id: 'living', label_en: 'Living', label_gu: 'સજીવ' },
+                        { id: 'nonliving', label_en: 'Non-living', label_gu: 'નિર્જીવ' }
+                    ],
+                    items: [
+                        { label: 'Tree', value: 'tree', target: 'living' },
+                        { label: 'Car', value: 'car', target: 'nonliving' },
+                        { label: 'Bird', value: 'bird', target: 'living' },
+                        { label: 'Stone', value: 'stone', target: 'nonliving' }
+                    ]
+                },
+                {
+                    id: 'e4',
+                    subject: 'Language',
+                    type: 'voice-describe',
+                    text_en: "Describe this picture to me. Tell me everything you see.",
+                    text_gu: "આ ચિત્રનું વર્ણન કરો. તમે જે પણ જુઓ છો તે કહો.",
+                    illustration: 'forest',
+                    expected: "I see a green forest with a sun in the sky."
+                },
+                {
+                    id: 'e5',
+                    subject: 'Mathematics',
+                    type: 'touch-image',
+                    text_en: "How many apples are shown here?",
+                    text_gu: "અહીં કેટલા સફરજન દર્શાવેલ છે?",
+                    options: [
+                        { label: '2', value: '2', correct: false },
+                        { label: '3', value: '3', correct: true },
+                        { label: '4', value: '4', correct: false }
+                    ]
+                },
+                {
+                    id: 'e6',
+                    subject: 'Science',
+                    type: 'touch-image',
+                    text_en: "Which of these is hot?",
+                    text_gu: "આમાંથી કઈ વસ્તુ ગરમ છે?",
+                    options: [
+                        { label: 'Ice Cream', value: 'icecream', correct: false },
+                        { label: 'The Sun', value: 'sun', correct: true },
+                        { label: 'Snowman', value: 'snowman', correct: false }
+                    ]
+                },
+                {
+                    id: 'e7',
+                    subject: 'Mathematics',
+                    type: 'touch-image',
+                    text_en: "Which shape is a circle?",
+                    text_gu: "કયો આકાર ગોળ છે?",
+                    options: [
+                        { label: 'Square', value: 'square', correct: false },
+                        { label: 'Circle', value: 'circle', correct: true },
+                        { label: 'Triangle', value: 'triangle', correct: false }
+                    ]
+                },
+                {
+                    id: 'e8',
+                    subject: 'Language',
+                    type: 'touch-image',
+                    text_en: "Which letter is a vowel?",
+                    text_gu: "કયો અક્ષર સ્વર છે?",
+                    options: [
+                        { label: 'Letter B', value: 'b', correct: false },
+                        { label: 'Letter E', value: 'e', correct: true },
+                        { label: 'Letter K', value: 'k', correct: false }
+                    ]
+                },
+                {
+                    id: 'e9',
+                    subject: 'Science',
+                    type: 'drag-buckets',
+                    text_en: "Sort into Domestic and Wild animals.",
+                    text_gu: "પાલતુ અને જંગલી પ્રાણીઓને અલગ કરો.",
+                    buckets: [
+                        { id: 'domestic', label_en: 'Domestic', label_gu: 'પાલતુ' },
+                        { id: 'wild', label_en: 'Wild', label_gu: 'જંગલી' }
+                    ],
+                    items: [
+                        { label: 'Cow', value: 'cow', target: 'domestic' },
+                        { label: 'Tiger', value: 'tiger', target: 'wild' },
+                        { label: 'Dog', value: 'dog', target: 'domestic' },
+                        { label: 'Lion', value: 'lion', target: 'wild' }
+                    ]
+                },
+                {
+                    id: 'e10',
+                    subject: 'Mathematics',
+                    type: 'touch-image',
+                    text_en: "What is 2 + 3?",
+                    text_gu: "૨ + ૩ કેટલા થાય?",
+                    options: [
+                        { label: '4', value: '4', correct: false },
+                        { label: '5', value: '5', correct: true },
+                        { label: '6', value: '6', correct: false }
+                    ]
+                },
+                {
+                    id: 'e11',
+                    subject: 'Language',
+                    type: 'voice-describe',
+                    text_en: "Say the name of this fruit aloud.",
+                    text_gu: "આ ફળનું નામ મોટેથી બોલો.",
+                    illustration: 'banana',
+                    expected: "banana"
+                },
+                {
+                    id: 'e12',
+                    subject: 'Science',
+                    type: 'touch-image',
+                    text_en: "Which animal flies in the sky?",
+                    text_gu: "કયું પ્રાણી આકાશમાં ઉડે છે?",
+                    options: [
+                        { label: 'Fish', value: 'fish', correct: false },
+                        { label: 'Eagle', value: 'eagle', correct: true },
+                        { label: 'Frog', value: 'frog', correct: false }
+                    ]
+                },
+                {
+                    id: 'e13',
+                    subject: 'Mathematics',
+                    type: 'touch-image',
+                    text_en: "Which is the biggest number?",
+                    text_gu: "સૌથી મોટી સંખ્યા કઈ છે?",
+                    options: [
+                        { label: 'Number 5', value: '5', correct: false },
+                        { label: 'Number 2', value: '2', correct: false },
+                        { label: 'Number 9', value: '9', correct: true }
+                    ]
+                },
+                {
+                    id: 'e14',
+                    subject: 'Language',
+                    type: 'touch-image',
+                    text_en: "Choose the rhyming word for CAT.",
+                    text_gu: "CAT (કેટ) સાથે પ્રાસ બેસતો શબ્દ પસંદ કરો.",
+                    options: [
+                        { label: 'Dog', value: 'dog', correct: false },
+                        { label: 'Hat', value: 'hat', correct: true },
+                        { label: 'Pig', value: 'pig', correct: false }
+                    ]
+                },
+                {
+                    id: 'e15',
+                    subject: 'Science',
+                    type: 'voice-describe',
+                    text_en: "What color is the sky on a sunny day?",
+                    text_gu: "તડકાવાળા દિવસે આકાશનો રંગ કેવો હોય છે?",
+                    illustration: 'sky',
+                    expected: "blue"
+                }
+            ],
+            '4-6': [
+                {
+                    id: 'b1',
+                    subject: 'Mathematics',
+                    type: 'touch-explain',
+                    text_en: "Which of these is a fraction?",
+                    text_gu: "આમાંથી કયું અપૂર્ણાંક છે?",
+                    options: [
+                        { label: '5', value: '5', correct: false },
+                        { label: '1/2', value: 'half', correct: true },
+                        { label: '10', value: '10', correct: false }
+                    ],
+                    explainPrompt_en: "Now explain what the bottom number (denominator) represents.",
+                    explainPrompt_gu: "હવે સમજાવો કે નીચેનો અંક (છેદ) શું દર્શાવે છે."
+                },
+                {
+                    id: 'b2',
+                    subject: 'Science',
+                    type: 'drag-buckets',
+                    text_en: "Sort these items into Solid, Liquid, or Gas.",
+                    text_gu: "આ પદાર્થોને ઘન, પ્રવાહી કે વાયુમાં સોર્ટ કરો.",
+                    buckets: [
+                        { id: 'solid', label_en: 'Solid', label_gu: 'ઘન' },
+                        { id: 'liquid', label_en: 'Liquid', label_gu: 'પ્રવાહી' },
+                        { id: 'gas', label_en: 'Gas', label_gu: 'વાયુ' }
+                    ],
+                    items: [
+                        { label: 'Ice', value: 'ice', target: 'solid' },
+                        { label: 'Water', value: 'water', target: 'liquid' },
+                        { label: 'Steam', value: 'steam', target: 'gas' },
+                        { label: 'Wood', value: 'wood', target: 'solid' },
+                        { label: 'Milk', value: 'milk', target: 'liquid' },
+                        { label: 'Oxygen', value: 'oxygen', target: 'gas' }
+                    ]
+                },
+                {
+                    id: 'b3',
+                    subject: 'Science',
+                    type: 'drag-sequence',
+                    text_en: "Arrange the Water Cycle stages in the correct sequence.",
+                    text_gu: "જળચક્રના તબક્કાઓને સાચા ક્રમમાં ગોઠવો.",
+                    items: [
+                        { label: 'Evaporation', value: '1' },
+                        { label: 'Condensation', value: '2' },
+                        { label: 'Precipitation', value: '3' },
+                        { label: 'Collection', value: '4' }
+                    ]
+                },
+                {
+                    id: 'b4',
+                    subject: 'Language',
+                    type: 'spot-fix',
+                    text_en: "Tap the wrong word: 'The dog run fast.'",
+                    text_gu: "ખોટો શબ્દ શોધો: 'The dog run fast.'",
+                    sentence: ["The", "dog", "run", "fast."],
+                    errorWordIndex: 2,
+                    explainPrompt_en: "Great. Now say the correct sentence aloud.",
+                    explainPrompt_gu: "ખૂબ સરસ. હવે સાચું વાક્ય મોટેથી બોલો."
+                },
+                {
+                    id: 'b5',
+                    subject: 'Science',
+                    type: 'voice-explain',
+                    text_en: "Why does ice melt in the sun?",
+                    text_gu: "બરફ સૂર્યના તડકામાં કેમ ઓગળે છે?",
+                    expected: "Ice absorbs heat energy from the sun which makes it melt into liquid."
+                },
+                {
+                    id: 'b6',
+                    subject: 'Mathematics',
+                    type: 'touch-explain',
+                    text_en: "What is the perimeter of a square with side 4 cm?",
+                    text_gu: "૪ સેમી લંબાઈ ધરાવતા ચોરસની પરિમિતિ કેટલી થાય?",
+                    options: [
+                        { label: '8 cm', value: '8', correct: false },
+                        { label: '12 cm', value: '12', correct: false },
+                        { label: '16 cm', value: '16', correct: true }
+                    ],
+                    explainPrompt_en: "Orally explain the formula for the perimeter of a square.",
+                    explainPrompt_gu: "ચોરસની પરિમિતિ શોધવાનું સૂત્ર મોટેથી સમજાવો."
+                },
+                {
+                    id: 'b7',
+                    subject: 'Science',
+                    type: 'touch-explain',
+                    text_en: "Which organ pumps blood in our body?",
+                    text_gu: "આપણા શરીરમાં રુધિરનું પંપીંગ કયું અંગ કરે છે?",
+                    options: [
+                        { label: 'Brain', value: 'brain', correct: false },
+                        { label: 'Heart', value: 'heart', correct: true },
+                        { label: 'Lungs', value: 'lungs', correct: false }
+                    ],
+                    explainPrompt_en: "Why is pumping blood important? Explain orally.",
+                    explainPrompt_gu: "શરીરમાં લોહીનું પરિભ્રમણ કેમ મહત્વનું છે તે મોખિક સમજાવો."
+                },
+                {
+                    id: 'b8',
+                    subject: 'Language',
+                    type: 'touch-explain',
+                    text_en: "Select the adjective: 'The smart student solved it.'",
+                    text_gu: "વિશેષણ પસંદ કરો: 'The smart student solved it.'",
+                    options: [
+                        { label: 'smart', value: 'smart', correct: true },
+                        { label: 'student', value: 'student', correct: false },
+                        { label: 'solved', value: 'solved', correct: false }
+                    ],
+                    explainPrompt_en: "What does an adjective do in a sentence? Explain orally.",
+                    explainPrompt_gu: "વાક્યમાં વિશેષણનું કાર્ય શું છે તે મોટેથી કહો."
+                },
+                {
+                    id: 'b9',
+                    subject: 'Mathematics',
+                    type: 'touch-explain',
+                    text_en: "What is 10 x 5?",
+                    text_gu: "૧૦ x ૫ કેટલા થાય?",
+                    options: [
+                        { label: '15', value: '15', correct: false },
+                        { label: '50', value: '50', correct: true },
+                        { label: '100', value: '100', correct: false }
+                    ],
+                    explainPrompt_en: "Orally explain what happens when you multiply any number by 10.",
+                    explainPrompt_gu: "કોઈપણ સંખ્યાને ૧૦ વડે ગુણવાથી શું ફેરફાર થાય તે મોખિક કહો."
+                },
+                {
+                    id: 'b10',
+                    subject: 'Science',
+                    type: 'drag-buckets',
+                    text_en: "Sort these into Herbivores and Carnivores.",
+                    text_gu: "તૃણાહારી અને માંસાહારી પ્રાણીઓને સોર્ટ કરો.",
+                    buckets: [
+                        { id: 'herbivore', label_en: 'Herbivore', label_gu: 'તૃણાહારી' },
+                        { id: 'carnivore', label_en: 'Carnivore', label_gu: 'માસાહારી' }
+                    ],
+                    items: [
+                        { label: 'Rabbit', value: 'rabbit', target: 'herbivore' },
+                        { label: 'Deer', value: 'deer', target: 'herbivore' },
+                        { label: 'Lion', value: 'lion', target: 'carnivore' },
+                        { label: 'Wolf', value: 'wolf', target: 'carnivore' }
+                    ]
+                },
+                {
+                    id: 'b11',
+                    subject: 'Language',
+                    type: 'spot-fix',
+                    text_en: "Tap the error: 'She do not like milk.'",
+                    text_gu: "ભૂલ શોધો: 'She do not like milk.'",
+                    sentence: ["She", "do", "not", "like", "milk."],
+                    errorWordIndex: 1,
+                    explainPrompt_en: "Correct the sentence and read it aloud.",
+                    explainPrompt_gu: "વાક્ય સુધારો અને મોટેથી બોલો."
+                },
+                {
+                    id: 'b12',
+                    subject: 'Science',
+                    type: 'touch-explain',
+                    text_en: "Which planet is known as the Red Planet?",
+                    text_gu: "કયો ગ્રહ લાલ ગ્રહ તરીકે ઓળખાય છે?",
+                    options: [
+                        { label: 'Venus', value: 'venus', correct: false },
+                        { label: 'Mars', value: 'mars', correct: true },
+                        { label: 'Jupiter', value: 'jupiter', correct: false }
+                    ],
+                    explainPrompt_en: "Why does it appear red? State orally.",
+                    explainPrompt_gu: "તે ગ્રહ લાલ કેમ દેખાય છે તે મોખિક કહો."
+                },
+                {
+                    id: 'b13',
+                    subject: 'Mathematics',
+                    type: 'touch-explain',
+                    text_en: "What is 100 - 35?",
+                    text_gu: "૧૦૦ - ૩૫ કેટલા થાય?",
+                    options: [
+                        { label: '55', value: '55', correct: false },
+                        { label: '65', value: '65', correct: true },
+                        { label: '75', value: '75', correct: false }
+                    ],
+                    explainPrompt_en: "Orally explain the subtraction steps.",
+                    explainPrompt_gu: "બાદબાકીના પગલાં મોખિક રીતે કહો."
+                },
+                {
+                    id: 'b14',
+                    subject: 'Language',
+                    type: 'voice-explain',
+                    text_en: "Define a noun and give one example.",
+                    text_gu: "નામ (noun) ની વ્યાખ્યા આપો અને એક ઉદાહરણ કહો.",
+                    expected: "A noun is a name of a person, place, or thing, like Taj Mahal."
+                },
+                {
+                    id: 'b15',
+                    subject: 'Science',
+                    type: 'drag-sequence',
+                    text_en: "Arrange the plant lifecycle stages.",
+                    text_gu: "છોડના જીવનચક્રના તબક્કાઓને ગોઠવો.",
+                    items: [
+                        { label: 'Seed', value: '1' },
+                        { label: 'Sprout', value: '2' },
+                        { label: 'Flower', value: '3' },
+                        { label: 'Fruit', value: '4' }
+                    ]
+                }
+            ],
+            '7-9': [
+                {
+                    id: 'a1',
+                    subject: 'Social Studies',
+                    type: 'touch-explain',
+                    text_en: "Pick a position: 'Technology makes life easier.'",
+                    text_gu: "એક પક્ષ પસંદ કરો: 'ટેકનોલોજી આપણું જીવન સરળ બનાવે છે.'",
+                    options: [
+                        { label: 'Agree / સંમત', value: 'agree', correct: true },
+                        { label: 'Disagree / અસંમત', value: 'disagree', correct: true }
+                    ],
+                    explainPrompt_en: "Now explain your choice and defend it in 2-3 sentences.",
+                    explainPrompt_gu: "હવે તમારી પસંદગી સમજાવો અને તેને ૨-૩ વાક્યોમાં સમર્થન આપો."
+                },
+                {
+                    id: 'a2',
+                    subject: 'Science',
+                    type: 'drag-sequence-voice',
+                    text_en: "Arrange the steps of human digestion.",
+                    text_gu: "માનવ પાચનના તબક્કાઓને સાચા ક્રમમાં ગોઠવો.",
+                    items: [
+                        { label: 'Food is chewed in the mouth.', value: '1' },
+                        { label: 'Esophagus carries food to stomach.', value: '2' },
+                        { label: 'Stomach acids break down food.', value: '3' },
+                        { label: 'Nutrients are absorbed in small intestine.', value: '4' },
+                        { label: 'Large intestine absorbs water.', value: '5' }
+                    ],
+                    explainPrompt_en: "What would happen if you removed stomach acids (Step 3)? Explain orally.",
+                    explainPrompt_gu: "જો જઠરના એસિડ (તબક્કો ૩) ને દૂર કરવામાં આવે તો શું થાય? મોખિક સમજાવો."
+                },
+                {
+                    id: 'a3',
+                    subject: 'Science',
+                    type: 'voice-explain',
+                    text_en: "Explain the process of photosynthesis as if teaching a younger child.",
+                    text_gu: "પ્રકાશસંશ્લેષણની પ્રક્રિયા નાના બાળકને શીખવતા હોવ તેમ સમજાવો.",
+                    expected: "Plants make food using sunlight, water, and air."
+                },
+                {
+                    id: 'a4',
+                    subject: 'Mathematics',
+                    type: 'spot-fix-math',
+                    text_en: "Identify the incorrect step in this algebra solution.",
+                    text_gu: "આ બીજગણિત ઉકેલમાં ખોટો તબક્કો ઓળખો.",
+                    steps: [
+                        { label: "Step 1: 4x + 8 = 16", value: "1", correct: true },
+                        { label: "Step 2: 4x = 24  (Error)", value: "2", correct: false },
+                        { label: "Step 3: x = 6", value: "3", correct: true }
+                    ],
+                    errorIndex: 1,
+                    explainPrompt_en: "Explain what is wrong with Step 2, and say what the correct step should be.",
+                    explainPrompt_gu: "તબક્કો ૨ માં શું ભૂલ છે તે સમજાવો, અને કહો કે સાચો તબક્કો શું હોવો જોઈએ."
+                },
+                {
+                    id: 'a5',
+                    subject: 'Social Studies',
+                    type: 'touch-explain',
+                    text_en: "Pick a position: 'History repeats itself.'",
+                    text_gu: "એક પક્ષ પસંદ કરો: 'ઇતિહાસ પોતાનું પુનરાવર્તન કરે છે.'",
+                    options: [
+                        { label: 'Agree / સંમત', value: 'agree', correct: true },
+                        { label: 'Disagree / અસંમત', value: 'disagree', correct: true }
+                    ],
+                    explainPrompt_en: "Orally defend your reasoning with a real-world example.",
+                    explainPrompt_gu: "વાસ્તવિક ઉદાહરણ આપીને તમારી વિચારસરણી મોખિક રીતે રજૂ કરો."
+                },
+                {
+                    id: 'a6',
+                    subject: 'Mathematics',
+                    type: 'touch-explain',
+                    text_en: "Solve for x: 2x - 4 = 10",
+                    text_gu: "x શોધો: 2x - 4 = 10",
+                    options: [
+                        { label: 'x = 3', value: '3', correct: false },
+                        { label: 'x = 7', value: '7', correct: true },
+                        { label: 'x = 14', value: '14', correct: false }
+                    ],
+                    explainPrompt_en: "Explain the algebraic steps you took to solve this equation.",
+                    explainPrompt_gu: "આ સમીકરણ ઉકેલવા માટે તમે કયા બીજગણિતના પગલાં લીધા તે મોખિક સમજાવો."
+                },
+                {
+                    id: 'a7',
+                    subject: 'Science',
+                    type: 'drag-buckets',
+                    text_en: "Sort the items into Elements and Compounds.",
+                    text_gu: "તત્વો અને સંયોજનોમાં વર્ગીકૃત કરો.",
+                    buckets: [
+                        { id: 'element', label_en: 'Element', label_gu: 'તત્વ' },
+                        { id: 'compound', label_en: 'Compound', label_gu: 'સંયોજન' }
+                    ],
+                    items: [
+                        { label: 'Gold', value: 'gold', target: 'element' },
+                        { label: 'Water', value: 'water', target: 'compound' },
+                        { label: 'Oxygen', value: 'oxygen', target: 'element' },
+                        { label: 'Salt', value: 'salt', target: 'compound' }
+                    ]
+                },
+                {
+                    id: 'a8',
+                    subject: 'Language',
+                    type: 'spot-fix',
+                    text_en: "Tap the error: 'Neither of the boys are here.'",
+                    text_gu: "ભૂલ શોધો: 'Neither of the boys are here.'",
+                    sentence: ["Neither", "of", "the", "boys", "are", "here."],
+                    errorWordIndex: 4,
+                    explainPrompt_en: "Explain the subject-verb agreement rule for this sentence.",
+                    explainPrompt_gu: "આ વાક્ય માટે કર્તા-ક્રિયાપદ સંગતતાનો નિયમ મોખિક સમજાવો."
+                },
+                {
+                    id: 'a9',
+                    subject: 'Mathematics',
+                    type: 'touch-explain',
+                    text_en: "What is the square root of 144?",
+                    text_gu: "૧૪૪ નું વર્ગમૂળ કેટલું થાય?",
+                    options: [
+                        { label: '10', value: '10', correct: false },
+                        { label: '12', value: '12', correct: true },
+                        { label: '14', value: '14', correct: false }
+                    ],
+                    explainPrompt_en: "Explain how square roots relate to exponents orally.",
+                    explainPrompt_gu: "વર્ગમૂળ અને ઘાત વચ્ચેનો સંબંધ મોખિક રીતે સમજાવો."
+                },
+                {
+                    id: 'a10',
+                    subject: 'Science',
+                    type: 'voice-explain',
+                    text_en: "What is Newton's First Law of Motion?",
+                    text_gu: "ન્યૂટનનો ગતિનો પ્રથમ નિયમ શું છે?",
+                    expected: "An object at rest stays at rest, and an object in motion stays in motion unless acted upon by an external force."
+                },
+                {
+                    id: 'a11',
+                    subject: 'Social Studies',
+                    type: 'drag-sequence',
+                    text_en: "Arrange the historical eras chronologically (earliest first).",
+                    text_gu: "ઐતિહાસિક યુગોને કાલક્રમિક ગોઠવો (સૌથી જૂનું પ્રથમ).",
+                    items: [
+                        { label: 'Stone Age', value: '1' },
+                        { label: 'Bronze Age', value: '2' },
+                        { label: 'Iron Age', value: '3' },
+                        { label: 'Middle Ages', value: '4' }
+                    ]
+                },
+                {
+                    id: 'a12',
+                    subject: 'Mathematics',
+                    type: 'spot-fix-math',
+                    text_en: "Identify the incorrect step in this expansion.",
+                    text_gu: "આ વિસ્તરણમાં ખોટો તબક્કો શોધો.",
+                    steps: [
+                        { label: "Step 1: (x+2)(x+3)", value: "1", correct: true },
+                        { label: "Step 2: x^2 + 3x + 2x + 6", value: "2", correct: true },
+                        { label: "Step 3: x^2 + 5x + 5 (Error)", value: "3", correct: false }
+                    ],
+                    errorIndex: 2,
+                    explainPrompt_en: "Explain what the correct final step should be and why.",
+                    explainPrompt_gu: "સાચો અંતિમ તબક્કો શું હોવો જોઈએ અને કેમ તે મોખિક કહો."
+                },
+                {
+                    id: 'a13',
+                    subject: 'Science',
+                    type: 'touch-explain',
+                    text_en: "Which cell organelle is the powerhouse of the cell?",
+                    text_gu: "કઈ કોષીય અંગિકા કોષનું પાવરહાઉસ તરીકે ઓળખાય છે?",
+                    options: [
+                        { label: 'Nucleus', value: 'nucleus', correct: false },
+                        { label: 'Mitochondria', value: 'mitochondria', correct: true },
+                        { label: 'Ribosome', value: 'ribosome', correct: false }
+                    ],
+                    explainPrompt_en: "Explain what ATP stands for and its function in the cell.",
+                    explainPrompt_gu: "ATP નું પૂરું નામ અને કોષમાં તેનું કાર્ય મોખિક સમજાવો."
+                },
+                {
+                    id: 'a14',
+                    subject: 'Language',
+                    type: 'voice-explain',
+                    text_en: "Explain the difference between a metaphor and a simile.",
+                    text_gu: "Metaphor (રૂપક) અને Simile (ઉપમા) વચ્ચેનો તફાવત સમજાવો.",
+                    expected: "A simile compares two things using like or as, while a metaphor states one thing is another."
+                },
+                {
+                    id: 'a15',
+                    subject: 'Science',
+                    type: 'drag-buckets',
+                    text_en: "Sort these energy sources into Renewable and Non-renewable.",
+                    text_gu: "આ ઊર્જા સ્ત્રોતોને પુનઃપ્રાપ્ય અને પુનઃઅપ્રાપ્યમાં વર્ગીકૃત કરો.",
+                    buckets: [
+                        { id: 'renewable', label_en: 'Renewable', label_gu: 'પુનઃપ્રાપ્ય' },
+                        { id: 'nonrenewable', label_en: 'Non-renewable', label_gu: 'પુનઃઅપ્રાપ્ય' }
+                    ],
+                    items: [
+                        { label: 'Solar', value: 'solar', target: 'renewable' },
+                        { label: 'Coal', value: 'coal', target: 'nonrenewable' },
+                        { label: 'Wind', value: 'wind', target: 'renewable' },
+                        { label: 'Oil', value: 'oil', target: 'nonrenewable' }
+                    ]
+                }
+            ]
+        };
+
+        // LANGUAGE TRANSLATION HELPER
+        function t(key) {
+            return translations[currentLanguage][key] || key;
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'gu' : 'en';
+            const langEn = document.getElementById('lang-en');
+            const langGu = document.getElementById('lang-gu');
+            if (langEn) langEn.classList.toggle('active', currentLanguage === 'en');
+            if (langGu) langGu.classList.toggle('active', currentLanguage === 'gu');
+            
+            translateAllUI();
+        }
+
+        function translateAllUI() {
+            // Navbar
+            const sub = document.getElementById('nav-smartboard-sub');
+            if (sub) sub.innerText = t('nav-smartboard-sub');
+            
+            const subTag = document.getElementById('subject-label-tag');
+            if (subTag) subTag.innerText = t('subject-label-tag');
+            
+            // Selector Modal
+            const selectorTitle = document.querySelector('.selector-title');
+            if (selectorTitle) selectorTitle.innerHTML = t('intro_title');
+            
+            const selectorDesc = document.querySelector('.selector-desc');
+            if (selectorDesc) selectorDesc.innerText = t('intro_sub');
+            
+            const desc13 = document.getElementById('grade-desc-1-3');
+            if (desc13) desc13.innerText = t('early_title');
+            const btn13 = document.getElementById('grade-btn-1-3');
+            if (btn13) btn13.innerText = t('early_btn');
+
+            const desc46 = document.getElementById('grade-desc-4-6');
+            if (desc46) desc46.innerText = t('reasoners_title');
+            const btn46 = document.getElementById('grade-btn-4-6');
+            if (btn46) btn46.innerText = t('reasoners_btn');
+
+            const desc79 = document.getElementById('grade-desc-7-9');
+            if (desc79) desc79.innerText = t('abstract_title');
+            const btn79 = document.getElementById('grade-btn-7-9');
+            if (btn79) btn79.innerText = t('abstract_btn');
+
+            // Screen 2 Profile
+            const naBadge = document.getElementById('now-assessing-badge-text');
+            if (naBadge) naBadge.innerText = t('now_assessing_badge');
+            
+            const nameHdr = document.getElementById('student-name-header');
+            if (nameHdr) nameHdr.innerText = t('candidate');
+            
+            const rollHdr = document.getElementById('student-roll-header');
+            if (rollHdr) rollHdr.innerText = t('classRoll');
+            
+            const startTxt = document.getElementById('start-btn-txt');
+            if (startTxt) startTxt.innerText = t('start');
+            
+            const tileName = document.getElementById('student-tile-name');
+            if (tileName) tileName.innerText = t('candidate');
+            
+            const tileRoll = document.getElementById('student-tile-roll');
+            if (tileRoll) tileRoll.innerText = t('classRoll');
+            
+            const skipTxt = document.getElementById('skip-btn-txt');
+            if (skipTxt) skipTxt.innerText = t('skip_btn_txt');
+            
+            const bufHdr = document.getElementById('buffer-header');
+            if (bufHdr) bufHdr.innerText = t('buffer_header');
+            
+            const bufBody = document.getElementById('buffer-body');
+            if (bufBody) bufBody.innerText = t('buffer_body');
+            
+            // Skipped list and students count
+            updateSkippedListUI();
+            updateStudentsCountUI();
+
+            // Exit btn
+            const exitBtn = document.querySelector('.btn-exit');
+            if (exitBtn) exitBtn.innerText = currentLanguage === 'en' ? "Exit Portal" : "બહાર નીકળો";
+
+            // Screen 3 Quiz Navigation
+            const backBtn = document.getElementById('btn-back-question');
+            if (backBtn) backBtn.innerText = t('back');
+            
+            const skipBtn = document.getElementById('btn-skip-question');
+            if (skipBtn) skipBtn.innerText = t('skip');
+            
+            const nextBtn = document.getElementById('btn-next-question');
+            if (nextBtn) {
+                const isLast = isLastQuestion();
+                nextBtn.innerText = isLast 
+                    ? (currentLanguage === 'en' ? 'Submit Assessment' : 'મૂલ્યાંકન સબમિટ કરો') 
+                    : t('next');
+            }
+
+            // Screen 4 Celebration
+            const celebTitle = document.getElementById('celeb-complete-title');
+            if (celebTitle) celebTitle.innerText = t('assessComplete');
+            
+            const celebFinish = document.getElementById('btn-celeb-finish');
+            if (celebFinish) celebFinish.innerText = t('finish');
+            
+            // Footer Text
+            updateFooterText();
+
+            // Refresh badge & question content
+            if (currentGradeGroup) {
+                updateActiveGradeBadge();
+                const quizScreen = document.getElementById('screen-quiz');
+                if (quizScreen && quizScreen.classList.contains('active')) {
+                    const questionsList = quizzes[currentGradeGroup];
+                    if (questionsList && questionsList[currentQuestionIdx]) {
+                        const q = questionsList[currentQuestionIdx];
+                        
+                        const qProg = document.getElementById('question-progress');
+                        if (qProg) qProg.innerText = `${t('qTitle')} ${currentQuestionIdx + 1} of ${questionsList.length}`;
+                        
+                        const questionString = currentLanguage === 'en' ? q.text_en : q.text_gu;
+                        const qText = document.getElementById('question-text');
+                        if (qText) qText.innerText = questionString;
+                        
+                        // Voice prompt synthesis text trigger
+                        setMascotText(questionString);
+                        
+                        const zone = document.getElementById('dynamic-interface-zone');
+                        if (zone && q.type === 'drag-buckets') {
+                            q.buckets.forEach(b => {
+                                const bTitleEl = zone.querySelector(`#bucket-${b.id} .bucket-title`);
+                                if (bTitleEl) {
+                                    bTitleEl.innerText = currentLanguage === 'en' ? b.label_en : b.label_gu;
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        function isLastQuestion() {
+            if (!currentGradeGroup) return false;
+            return currentQuestionIdx === quizzes[currentGradeGroup].length - 1;
+        }
+
+        // CONFIRM EXIT
+        function confirmExit() {
+            if (confirm(t('exitConfirm'))) {
+                // RESET STATE
+                currentQuestionIdx = 0;
+                currentGradeGroup = '';
+                selectedAnswers = [];
+                score = 0;
+                if (timerInterval) clearInterval(timerInterval);
+                
+                window.close();
+                window.location.href = "./index.html";
+            }
+        }
+
+        // ROUTER SWITCHING HELPERS
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen-container').forEach(s => s.classList.remove('active'));
+            const activeScreen = document.getElementById(screenId);
+            if (activeScreen) activeScreen.classList.add('active');
+            
+            // Toggle footer mascot visibility so there's absolutely no robot panel on the screen during quiz
+            const footerMascot = document.querySelector('.footer-mascot');
+            if (footerMascot) {
+                if (screenId === 'screen-quiz') {
+                    footerMascot.style.display = 'none';
+                } else {
+                    footerMascot.style.display = 'flex';
+                }
+            }
+            
+            updateFooterText();
+        }
+
+        function updateFooterText() {
+            const footerText = document.getElementById('footer-instruction-text');
+            if (!footerText) return;
+            
+            const selScreen = document.getElementById('screen-selector');
+            const profScreen = document.getElementById('screen-profile');
+            const qScreen = document.getElementById('screen-quiz');
+            
+            if (selScreen && selScreen.classList.contains('active')) {
+                footerText.innerText = t('footer_default');
+            } else if (profScreen && profScreen.classList.contains('active')) {
+                footerText.innerText = t('footer_profile');
+            } else if (qScreen && qScreen.classList.contains('active')) {
+                footerText.innerText = t('footer_quiz');
+            }
+        }
+
+        // SCREEN 1 -> SCREEN 3 DIRECTLY
+        function selectGradeGroup(group) {
+            currentGradeGroup = group;
+            isStudentSkipped = false;
+            
+            // Set class header and week subject
+            const gradeText = group === '1-3' ? 'Miko Test — Grades 1–3' : group === '4-6' ? 'Miko Test — Grades 4–6' : 'Miko Test — Grades 7–9';
+            const navClassHeader = document.getElementById('nav-class-header');
+            if (navClassHeader) navClassHeader.innerText = gradeText;
+            
+            const subject = group === '1-3' ? 'Environmental Science' : group === '4-6' ? 'Mathematics' : 'Science';
+            const navSubTag = document.getElementById('subject-name-tag');
+            if (navSubTag) navSubTag.innerText = subject;
+            
+            const subEmoji = document.getElementById('subject-emoji');
+            if (subEmoji) {
+                if (group === '1-3') {
+                    subEmoji.innerHTML = `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.8a7 7 0 0 1-9 8.2z"></path><path d="M9 22v-4"></path></svg>`;
+                } else if (group === '4-6') {
+                    subEmoji.innerHTML = `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+                } else {
+                    subEmoji.innerHTML = `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M6 3h12"></path><path d="M8.5 3a4 4 0 0 0-3.5 6l5.5 12h3l5.5-12a4 4 0 0 0-3.5-6h-7z"></path></svg>`;
+                }
+            }
+            
+            // Reveal subject card in nav
+            const subNode = document.getElementById('nav-subject-node');
+            if (subNode) subNode.classList.add('visible');
+            
+            translateAllUI();
+            // Start assessment directly
+            startQuizAssessment();
+        }
+
+        function goBackToSelector() {
+            const subNode = document.getElementById('nav-subject-node');
+            if (subNode) subNode.classList.remove('visible');
+            showScreen('screen-selector');
+        }
+
+        // STUDENT DASHBOARD CONTROL: SKIP / PRESENT
+        function skipStudentFromHome() {
+            isStudentSkipped = true;
+            translateAllUI();
+        }
+
+        function unskipStudentFromHome() {
+            isStudentSkipped = false;
+            translateAllUI();
+        }
+
+        function updateStudentsCountUI() {
+            const labelEl = document.getElementById('students-today-lbl');
+            if (labelEl) {
+                const count = isStudentSkipped ? 0 : 1;
+                labelEl.innerText = `${t('students_today_lbl')} (${count})`;
+            }
+            
+            const assessingCard = document.querySelector('.now-assessing-card');
+            const tileCard = document.querySelector('.student-tile-card');
+            
+            if (assessingCard) {
+                if (isStudentSkipped) {
+                    assessingCard.innerHTML = `
+                        <div style="text-align: center; color: var(--text-secondary); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-green);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <h2 style="font-size: 20px; font-weight: 800; color: var(--primary); margin-top: 8px;">
+                                ${currentLanguage === 'en' ? 'All Active Students Evaluated!' : 'બધા સક્રિય વિદ્યાર્થીઓ પૂર્ણ!'}
+                            </h2>
+                        </div>
+                    `;
+                    if (tileCard) tileCard.style.display = 'none';
+                } else {
+                    assessingCard.innerHTML = `
+                        <span class="now-assessing-badge" id="now-assessing-badge-text">${t('now_assessing_badge')}</span>
+                        <div class="now-assessing-inner">
+                            <div class="student-avatar-big-glow">
+                                <div class="student-avatar-big"></div>
+                            </div>
+                            <div class="now-assessing-details">
+                                <h1 class="student-name-big" id="student-name-header">${t('candidate')}</h1>
+                                <div class="student-roll-big" id="student-roll-header">${t('classRoll')}</div>
+                                <div style="margin-top: 16px;">
+                                    <button class="btn-start-assess" onclick="startQuizAssessment()">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        <span id="start-btn-txt">${t('start')}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    if (tileCard) tileCard.style.display = 'flex';
+                }
+            }
+        }
+
+        function updateSkippedListUI() {
+            const skippedBox = document.getElementById('skipped-list-box');
+            if (!skippedBox) return;
+            
+            const skippedLabel = document.getElementById('skipped-label');
+            if (skippedLabel) skippedLabel.innerText = `${t('skipped_label')} (${isStudentSkipped ? 1 : 0})`;
+            
+            if (isStudentSkipped) {
+                skippedBox.innerHTML = `
+                    <div style="width:100%; padding:10px; background:white; border-radius:12px; border:1px solid var(--border); display:flex; align-items:center; gap:8px;">
+                        <div class="student-avatar-tile" style="width:36px; height:36px; margin:0;"></div>
+                        <div style="flex-grow:1; text-align:left;">
+                            <div style="font-size:11px; font-weight:900; color:var(--text-primary);">${t('candidate')}</div>
+                            <div style="font-size:9px; color:var(--text-secondary);">${t('classRoll')}</div>
+                        </div>
+                        <button onclick="unskipStudentFromHome()" style="background:white; border:1.5px solid var(--primary); color:var(--primary); font-size:10px; font-weight:800; padding:4px 8px; border-radius:8px; cursor:pointer;">
+                            ${t('mark_present')}
+                        </button>
+                    </div>
+                `;
+                skippedBox.style.justifyContent = 'flex-start';
+            } else {
+                skippedBox.innerHTML = `
+                    <div class="skipped-empty-emoji" style="display: flex; justify-content: center; align-items: center;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary); opacity:0.5;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    </div>
+                    <div id="no-skipped-txt">${t('no_skipped_txt')}</div>
+                `;
+                skippedBox.style.justifyContent = 'center';
+            }
+        }
+
+        // SCREEN 2 -> SCREEN 3: START QUIZ
+        function startQuizAssessment() {
+            currentQuestionIdx = 0;
+            score = 0;
+            timeLeft = 180;
+            selectedAnswers = [];
+            
+            // Update badges
+            updateActiveGradeBadge();
+            const timerEl = document.getElementById('quiz-timer');
+            if (timerEl) timerEl.classList.add('visible');
+            
+            startTimer();
+            showScreen('screen-quiz');
+            renderQuestion();
+        }
+
+        function updateActiveGradeBadge() {
+            const labelEl = document.getElementById('grade-group-text');
+            if (!labelEl) return;
+            
+            const label = currentGradeGroup === '1-3' 
+                ? (currentLanguage === 'en' ? 'Early Learners (1-3)' : 'પ્રારંભિક શીખનારા (1-3)')
+                : currentGradeGroup === '4-6'
+                ? (currentLanguage === 'en' ? 'Building Reasoners (4-6)' : 'વિકાસશીલ વિદ્યાર્થીઓ (4-6)')
+                : (currentLanguage === 'en' ? 'Abstract Thinkers (7-9)' : 'અમૂર્ત વિચારકો (7-9)');
+            labelEl.innerText = label;
+        }
+
+        // TIMER UTILITIES
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            updateTimerUI();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerUI();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("⏰ Assessment time limit reached!");
+                    showCelebration();
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const timerTxt = document.getElementById('timer-text');
+            const cornerTimerTxt = document.getElementById('corner-timer-text');
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const text = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timerTxt) timerTxt.innerText = text;
+            if (cornerTimerTxt) cornerTimerTxt.innerText = text;
+            
+            const timerContainer = document.getElementById('quiz-timer');
+            const cornerTimerContainer = document.getElementById('quiz-corner-timer');
+            
+            const isUrgent = timeLeft <= 30;
+            if (timerContainer) {
+                timerContainer.classList.toggle('urgent', isUrgent);
+            }
+            if (cornerTimerContainer) {
+                cornerTimerContainer.classList.toggle('urgent', isUrgent);
+            }
+        }
+
+        // MASCOT INTERACTION SAFE NULL-CHECK HELPERS
+        function setMascotTalking(talking) {
+            const mascot = document.getElementById('miko-mascot-element');
+            const waves = document.getElementById('waves-node');
+            if (talking) {
+                if (mascot) mascot.classList.add('talking');
+                if (waves) waves.classList.add('speaking');
+            } else {
+                if (mascot) mascot.classList.remove('talking');
+                if (waves) waves.classList.remove('speaking');
+            }
+        }
+
+        function setMascotListening(listening) {
+            const waves = document.getElementById('waves-node');
+            if (listening) {
+                if (waves) waves.classList.add('listening');
+            } else {
+                if (waves) waves.classList.remove('listening');
+            }
+        }
+
+        function setMascotText(text, highlighted = false) {
+            const bubble = document.getElementById('ai-speech-bubble');
+            if (bubble) {
+                bubble.innerText = text;
+                if (highlighted) {
+                    bubble.classList.add('highlighted');
+                } else {
+                    bubble.classList.remove('highlighted');
+                }
+            }
+        }
+
+        // TEXT-TO-SPEECH (TTS) EMULATION
+        function stopAllSpeaking() {
+            window.speechSynthesis.cancel();
+            setMascotTalking(false);
+            isSpeakingState = false;
+        }
+
+        function stripEmojis(str) {
+            if (!str) return '';
+            return str.replace(/[\u{1F300}-\u{1FAFF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{27BF}]|[\u{2B50}]/gu, '');
+        }
+
+        let _saraVoice = null;
+        let _gujaratiVoice = null;
+
+        function loadVoices() {
+            const voices = window.speechSynthesis.getVoices();
+            // Try to find Sara or a good English female voice
+            _saraVoice = voices.find(v => v.name.toLowerCase().includes('sara') && v.lang.startsWith('en')) ||
+                         voices.find(v => v.name.toLowerCase().includes('samantha')) ||
+                         voices.find(v => v.name.toLowerCase().includes('victoria')) ||
+                         voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('female')) ||
+                         voices.find(v => v.lang === 'en-US') ||
+                         voices.find(v => v.lang.startsWith('en')) ||
+                         null;
+            // Gujarati voice
+            _gujaratiVoice = voices.find(v => v.lang === 'gu-IN' || v.lang.startsWith('gu')) || null;
+        }
+
+        // Load voices — browsers fire voiceschanged
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+            loadVoices();
+        }
+
+        function speakAI(text) {
+            stopAllSpeaking();
+            if (!('speechSynthesis' in window)) return;
+            
+            isSpeakingState = true;
+            setMascotTalking(true);
+            
+            const cleanText = stripEmojis(text);
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            
+            if (currentLanguage === 'gu') {
+                utterance.lang = 'gu-IN';
+                if (_gujaratiVoice) utterance.voice = _gujaratiVoice;
+            } else {
+                utterance.lang = 'en-US';
+                if (_saraVoice) utterance.voice = _saraVoice;
+            }
+            
+            utterance.rate = 0.88;
+            utterance.pitch = 1.05;
+            utterance.onend = () => {
+                setMascotTalking(false);
+                isSpeakingState = false;
+                
+                if (shouldAutoStartMicAfterSpeaking) {
+                    shouldAutoStartMicAfterSpeaking = false;
+                    const micBtn = document.getElementById('quiz-mic-trigger');
+                    if (micBtn && micBtn.offsetParent !== null) {
+                        const questionsList = quizzes[currentGradeGroup];
+                        const q = questionsList ? questionsList[currentQuestionIdx] : null;
+                        if (q) {
+                            startVoiceRecognition(q);
+                        }
+                    }
+                }
+            };
+            
+            utterance.onerror = () => {
+                setMascotTalking(false);
+                isSpeakingState = false;
+                shouldAutoStartMicAfterSpeaking = false;
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function speakCurrentQuestionText() {
+            const questionsList = quizzes[currentGradeGroup];
+            if (questionsList && questionsList[currentQuestionIdx]) {
+                const q = questionsList[currentQuestionIdx];
+                const qText = currentLanguage === 'en' ? q.text_en : q.text_gu;
+                shouldAutoStartMicAfterSpeaking = true;
+                speakAI(qText);
+            }
+        }
+
+        // RENDER QUESTION ARENA
+        function renderQuestion() {
+            stopAllSpeaking();
+            stopVoiceRecognition();
+            
+            if (!currentGradeGroup) {
+                console.error("No active grade group selected.");
+                return;
+            }
+            
+            const questionsList = quizzes[currentGradeGroup];
+            if (!questionsList || !questionsList[currentQuestionIdx]) {
+                console.error("Question not found at index:", currentQuestionIdx);
+                return;
+            }
+            
+            const q = questionsList[currentQuestionIdx];
+            
+            // Progress Update
+            const qProg = document.getElementById('question-progress');
+            if (qProg) qProg.innerText = `${t('qTitle')} ${currentQuestionIdx + 1} of ${questionsList.length}`;
+            
+            const subBadge = document.getElementById('arena-subject');
+            if (subBadge) subBadge.innerText = q.subject;
+            
+            const fillPercent = ((currentQuestionIdx + 1) / questionsList.length) * 100;
+            const progressFill = document.getElementById('progress-indicator');
+            if (progressFill) progressFill.style.width = `${fillPercent}%`;
+            
+            // Back button vis
+            const backBtn = document.getElementById('btn-back-question');
+            if (backBtn) backBtn.style.visibility = currentQuestionIdx > 0 ? 'visible' : 'hidden';
+            
+            // Next button label change if last
+            const nextBtn = document.getElementById('btn-next-question');
+            if (nextBtn) {
+                const isLast = isLastQuestion();
+                nextBtn.innerText = isLast 
+                    ? (currentLanguage === 'en' ? 'Submit Assessment' : 'મૂલ્યાંકન સબમિટ કરો') 
+                    : t('next');
+            }
+            
+            // Question Text
+            const questionString = currentLanguage === 'en' ? q.text_en : q.text_gu;
+            const qText = document.getElementById('question-text');
+            if (qText) qText.innerText = questionString;
+            
+            // Reset speech bubbles
+            setMascotText(questionString);
+            
+            // Speak question
+            setTimeout(() => {
+                try {
+                    shouldAutoStartMicAfterSpeaking = true;
+                    speakAI(questionString);
+                } catch(e) {
+                    console.warn("TTS speakAI failed:", e);
+                }
+            }, 300);
+
+            // Visual aid default hide
+            const visualAid = document.getElementById('visual-aid-container');
+            if (visualAid) {
+                visualAid.innerHTML = '';
+                visualAid.style.display = 'none';
+            }
+
+            // Load interface zone
+            const zone = document.getElementById('dynamic-interface-zone');
+            if (zone) {
+                zone.innerHTML = '';
+                
+                // CHOOSE SPECIFIC LAYOUT TEMPLATE BASED ON QUESTION TYPE
+                switch(q.type) {
+                    case 'touch-image':
+                        renderTouchImage(q, zone);
+                        break;
+                    case 'touch-odd':
+                        renderTouchOdd(q, zone);
+                        break;
+                    case 'drag-buckets':
+                        renderDragBuckets(q, zone);
+                        break;
+                    case 'voice-describe':
+                        renderVoiceDescribe(q, zone);
+                        break;
+                    case 'touch-explain':
+                        renderTouchExplain(q, zone, visualAid);
+                        break;
+                    case 'drag-sequence':
+                    case 'drag-sequence-voice':
+                        renderDragSequence(q, zone);
+                        break;
+                    case 'spot-fix':
+                        renderSpotFix(q, zone);
+                        break;
+                    case 'voice-explain':
+                        renderVoiceExplain(q, zone);
+                        break;
+                    case 'spot-fix-math':
+                        renderSpotFixMath(q, zone, visualAid);
+                        break;
+                }
+            }
+        }
+
+        // ================= TEMPLATE RENDERING IMPLEMENTATIONS =================
+
+        // Minimal flat cartoon SVG icons for touch options
+        const optionIconSVGs = {
+            lion:    `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="18" fill="#FFCF77"/><circle cx="32" cy="36" r="12" fill="#F9A825"/><ellipse cx="32" cy="48" rx="8" ry="4" fill="#E68900"/><circle cx="26" cy="32" r="3" fill="white"/><circle cx="38" cy="32" r="3" fill="white"/><circle cx="27" cy="32" r="1.5" fill="#333"/><circle cx="39" cy="32" r="1.5" fill="#333"/><path d="M29 40 Q32 43 35 40" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+            fish:    `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 32 C14 22 28 18 38 32 C28 46 14 42 8 32Z" fill="#81D4FA"/><path d="M38 32 L50 22 L46 32 L50 42 Z" fill="#4FC3F7"/><circle cx="18" cy="30" r="2.5" fill="white"/><circle cx="18" cy="30" r="1.5" fill="#333"/></svg>`,
+            eagle:   `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="36" rx="10" ry="14" fill="#795548"/><path d="M22 28 C10 20 6 30 14 34" fill="#8D6E63"/><path d="M42 28 C54 20 58 30 50 34" fill="#8D6E63"/><circle cx="32" cy="26" r="7" fill="white"/><circle cx="29" cy="25" r="2" fill="#333"/><circle cx="35" cy="25" r="2" fill="#333"/><path d="M30 30 L34 30 L32 34Z" fill="#FFA000"/></svg>`,
+            dog:     `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="38" rx="14" ry="12" fill="#D7A96A"/><circle cx="32" cy="26" r="11" fill="#D7A96A"/><ellipse cx="24" cy="20" rx="5" ry="8" fill="#C49A55"/><ellipse cx="40" cy="20" rx="5" ry="8" fill="#C49A55"/><circle cx="28" cy="26" r="2.5" fill="#333"/><circle cx="36" cy="26" r="2.5" fill="#333"/><ellipse cx="32" cy="31" rx="5" ry="3.5" fill="#C49A55"/><path d="M28 34 Q32 37 36 34" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+            cat:     `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="38" rx="12" ry="11" fill="#BDBDBD"/><circle cx="32" cy="26" r="10" fill="#BDBDBD"/><path d="M22 18 L18 10 L26 16" fill="#BDBDBD"/><path d="M42 18 L46 10 L38 16" fill="#BDBDBD"/><circle cx="28" cy="25" r="2" fill="#333"/><circle cx="36" cy="25" r="2" fill="#333"/><path d="M29 30 Q32 33 35 30" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+            rose:    `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="36" width="4" height="20" fill="#4CAF50"/><circle cx="32" cy="28" r="12" fill="#F48FB1"/><circle cx="26" cy="22" r="7" fill="#F06292"/><circle cx="38" cy="22" r="7" fill="#F06292"/><circle cx="32" cy="34" r="7" fill="#EC407A"/></svg>`,
+            sun:     `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="12" fill="#FFD54F"/><line x1="32" y1="8" x2="32" y2="14" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="50" x2="32" y2="56" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="8" y1="32" x2="14" y2="32" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="50" y1="32" x2="56" y2="32" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="15" y1="15" x2="19" y2="19" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="45" y1="45" x2="49" y2="49" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="49" y1="15" x2="45" y2="19" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="19" y1="49" x2="15" y2="45" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/></svg>`,
+            icecream:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26 38 L32 58 L38 38Z" fill="#FFE082"/><circle cx="24" cy="28" r="12" fill="#F48FB1"/><circle cx="36" cy="24" r="12" fill="#80DEEA"/><circle cx="44" cy="32" r="10" fill="#FFAB91"/></svg>`,
+            snowman: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="46" r="14" fill="white" stroke="#BDBDBD" stroke-width="2"/><circle cx="32" cy="26" r="10" fill="white" stroke="#BDBDBD" stroke-width="2"/><circle cx="29" cy="24" r="1.5" fill="#333"/><circle cx="35" cy="24" r="1.5" fill="#333"/><path d="M30 28 Q32 30 34 28" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M20 22 L12 18" stroke="#795548" stroke-width="3" stroke-linecap="round"/><path d="M44 22 L52 18" stroke="#795548" stroke-width="3" stroke-linecap="round"/></svg>`,
+            square:  `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="12" width="40" height="40" rx="4" fill="#90CAF9" stroke="#42A5F5" stroke-width="2"/></svg>`,
+            circle:  `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="22" fill="#F48FB1" stroke="#E91E63" stroke-width="2"/></svg>`,
+            triangle:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="32,10 56,54 8,54" fill="#A5D6A7" stroke="#4CAF50" stroke-width="2" stroke-linejoin="round"/></svg>`,
+            default: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="26" fill="#E8F0FE"/><text x="32" y="40" font-size="22" text-anchor="middle" font-family="system-ui" fill="#5B8DEF">?</text></svg>`
+        };
+
+        function getOptionIcon(opt) {
+            const key = (opt.value || '').toLowerCase();
+            return optionIconSVGs[key] || optionIconSVGs[opt.label?.toLowerCase()] || optionIconSVGs.default;
+        }
+
+        // 1. Touch Option (early learners)
+        function renderTouchImage(q, container) {
+            const grid = document.createElement('div');
+            grid.className = 'image-mcq-grid';
+            
+            q.options.forEach((opt, idx) => {
+                const box = document.createElement('div');
+                box.className = 'image-option';
+                box.onclick = () => {
+                    grid.querySelectorAll('.image-option').forEach(o => o.classList.remove('selected'));
+                    box.classList.add('selected');
+                    selectedAnswers[currentQuestionIdx] = opt.value;
+                };
+                
+                const iconDiv = document.createElement('div');
+                iconDiv.className = 'image-graphic';
+                iconDiv.innerHTML = getOptionIcon(opt);
+                
+                const label = document.createElement('div');
+                label.className = 'image-label';
+                label.innerText = opt.label;
+                
+                box.appendChild(iconDiv);
+                box.appendChild(label);
+                grid.appendChild(box);
+            });
+            container.appendChild(grid);
+        }
+
+        // 2. Touch Odd One Out (early learners)
+        function renderTouchOdd(q, container) {
+            renderTouchImage(q, container);
+        }
+
+        // 3. Drag into buckets (Grades 1-3 sorting and Grades 4-6 sorting)
+        function renderDragBuckets(q, container) {
+            const dragLayout = document.createElement('div');
+            dragLayout.className = 'drag-layout';
+            
+            // Add buckets
+            const bucketsDiv = document.createElement('div');
+            bucketsDiv.className = 'buckets-container';
+            
+            q.buckets.forEach(b => {
+                const buck = document.createElement('div');
+                buck.className = 'bucket';
+                buck.id = `bucket-${b.id}`;
+                buck.ondragover = (e) => {
+                    e.preventDefault();
+                    buck.classList.add('dragover');
+                };
+                buck.ondragleave = () => {
+                    buck.classList.remove('dragover');
+                };
+                buck.ondrop = (e) => {
+                    e.preventDefault();
+                    buck.classList.remove('dragover');
+                    const id = e.dataTransfer.getData('text/plain');
+                    const tile = document.getElementById(id);
+                    if (tile) {
+                        buck.appendChild(tile);
+                        updateDragAnswer(q);
+                    }
+                };
+                
+                const title = document.createElement('div');
+                title.className = 'bucket-title';
+                title.innerText = currentLanguage === 'en' ? b.label_en : b.label_gu;
+                buck.appendChild(title);
+                bucketsDiv.appendChild(buck);
+            });
+
+            // Add source container
+            const sourceContainer = document.createElement('div');
+            sourceContainer.className = 'drag-source-container';
+            sourceContainer.id = 'drag-source-box';
+            sourceContainer.ondragover = (e) => e.preventDefault();
+            sourceContainer.ondrop = (e) => {
+                e.preventDefault();
+                const id = e.dataTransfer.getData('text/plain');
+                const tile = document.getElementById(id);
+                if (tile) {
+                    sourceContainer.appendChild(tile);
+                    updateDragAnswer(q);
+                }
+            };
+            
+            // Add draggables
+            q.items.forEach((item, idx) => {
+                const tile = document.createElement('div');
+                tile.className = 'drag-tile';
+                tile.innerText = item.label;
+                tile.draggable = true;
+                tile.id = `drag-tile-${idx}`;
+                
+                tile.ondragstart = (e) => {
+                    e.dataTransfer.setData('text/plain', tile.id);
+                };
+
+                // Touch DnD
+                let touchX = 0, touchY = 0;
+                tile.addEventListener('touchstart', (e) => {
+                    const touch = e.touches[0];
+                    touchX = touch.clientX;
+                    touchY = touch.clientY;
+                    tile.style.position = 'relative';
+                    tile.style.zIndex = '1000';
+                });
+                
+                tile.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const diffX = touch.clientX - touchX;
+                    const diffY = touch.clientY - touchY;
+                    tile.style.transform = `translate(${diffX}px, ${diffY}px)`;
+                });
+                
+                tile.addEventListener('touchend', (e) => {
+                    tile.style.position = '';
+                    tile.style.zIndex = '';
+                    tile.style.transform = '';
+                    
+                    const touch = e.changedTouches[0];
+                    let dropped = false;
+                    q.buckets.forEach(b => {
+                        const buckEl = document.getElementById(`bucket-${b.id}`);
+                        const rect = buckEl.getBoundingClientRect();
+                        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                            buckEl.appendChild(tile);
+                            dropped = true;
+                        }
+                    });
+                    
+                    if (!dropped) {
+                        const srcEl = document.getElementById('drag-source-box');
+                        if (srcEl) srcEl.appendChild(tile);
+                    }
+                    updateDragAnswer(q);
+                });
+                
+                sourceContainer.appendChild(tile);
+            });
+            
+            dragLayout.appendChild(sourceContainer);
+            dragLayout.appendChild(bucketsDiv);
+            container.appendChild(dragLayout);
+            
+            selectedAnswers[currentQuestionIdx] = {};
+        }
+
+        function updateDragAnswer(q) {
+            const answerMap = {};
+            q.buckets.forEach(b => {
+                const buck = document.getElementById(`bucket-${b.id}`);
+                if (buck) {
+                    const tiles = buck.querySelectorAll('.drag-tile');
+                    tiles.forEach(t => {
+                        const idxStr = t.id.replace('drag-tile-', '');
+                        const item = q.items[parseInt(idxStr)];
+                        answerMap[item.value] = b.id;
+                    });
+                }
+            });
+            selectedAnswers[currentQuestionIdx] = answerMap;
+        }
+
+        // 4. Voice Picture Description (Early learners)
+        function renderVoiceDescribe(q, container) {
+            const voiceBox = document.createElement('div');
+            voiceBox.className = 'voice-section';
+            
+            if (q.illustration) {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'voice-illustration-container';
+                imgContainer.style.width = '180px';
+                imgContainer.style.height = '180px';
+                imgContainer.style.borderRadius = 'var(--r-md)';
+                imgContainer.style.overflow = 'hidden';
+                imgContainer.style.border = '2px solid var(--border-dark)';
+                imgContainer.style.boxShadow = 'var(--card-shadow)';
+                imgContainer.style.marginBottom = '16px';
+                imgContainer.style.display = 'flex';
+                imgContainer.style.alignItems = 'center';
+                imgContainer.style.justifyContent = 'center';
+                imgContainer.style.background = '#ffffff';
+
+                const img = document.createElement('img');
+                img.src = `./assets/images/${q.illustration}.png`;
+                img.alt = q.illustration;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                
+                imgContainer.appendChild(img);
+                voiceBox.appendChild(imgContainer);
+                const placeholder = document.createElement('div');
+                placeholder.className = 'voice-illust-placeholder';
+                placeholder.innerHTML = `<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); margin-bottom: 8px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>`;
+                
+                const sub = document.createElement('span');
+                sub.innerText = currentLanguage === 'en' ? 'AI Picture Target' : 'ચિત્ર નિશાન';
+                placeholder.appendChild(sub);
+                
+                voiceBox.appendChild(placeholder);
+            }
+            
+            renderMicSection(q, voiceBox);
+            container.appendChild(voiceBox);
+        }
+
+        // 5. Touch Card + Explain Oral follow-up (Grades 4-6 & 7-9)
+        function renderTouchExplain(q, container, visualAid) {
+            if (q.id === 'b1' && visualAid) {
+                visualAid.style.display = 'flex';
+                
+                const img = document.createElement('img');
+                img.src = './assets/images/chocolate.png';
+                img.alt = 'Fraction visual aid';
+                img.style.maxHeight = '120px';
+                img.style.objectFit = 'contain';
+                img.style.margin = '0 auto';
+                img.style.borderRadius = '12px';
+                img.style.boxShadow = '0 8px 16px rgba(37, 99, 235, 0.1)';
+                img.style.border = '2px solid #E2E8F0';
+                visualAid.appendChild(img);
+            }
+
+            const mcqDiv = document.createElement('div');
+            mcqDiv.className = 'mcq-container';
+            
+            q.options.forEach((opt, index) => {
+                const box = document.createElement('div');
+                box.className = 'mcq-option';
+                box.onclick = () => {
+                    mcqDiv.querySelectorAll('.mcq-option').forEach(o => o.classList.remove('selected'));
+                    box.classList.add('selected');
+                    selectedAnswers[currentQuestionIdx] = opt.value;
+                    
+                    triggerOralExplain(q);
+                };
+                
+                const star = document.createElement('div');
+                star.className = 'mcq-star';
+                star.innerText = String.fromCharCode(65 + index);
+                
+                const label = document.createElement('div');
+                label.className = 'mcq-text';
+                label.innerText = opt.label;
+                
+                box.appendChild(star);
+                box.appendChild(label);
+                mcqDiv.appendChild(box);
+            });
+            
+            container.appendChild(mcqDiv);
+            
+            const voiceSection = document.createElement('div');
+            voiceSection.className = 'voice-section';
+            voiceSection.id = 'oral-explain-section';
+            voiceSection.style.display = 'none';
+            voiceSection.style.marginTop = '24px';
+            voiceSection.style.borderTop = '1px solid var(--border)';
+            voiceSection.style.paddingTop = '16px';
+            
+            renderMicSection(q, voiceSection);
+            container.appendChild(voiceSection);
+        }
+
+        function triggerOralExplain(q) {
+            const section = document.getElementById('oral-explain-section');
+            if (section && section.style.display === 'none') {
+                section.style.display = 'flex';
+                section.scrollIntoView({ behavior: 'smooth' });
+                
+                const prompt = currentLanguage === 'en' ? q.explainPrompt_en : q.explainPrompt_gu;
+                setMascotText(prompt, true);
+                
+                setTimeout(() => {
+                    shouldAutoStartMicAfterSpeaking = true;
+                    speakAI(prompt);
+                }, 400);
+            }
+        }
+
+        // 6. Drag cards into sequences (water cycle, digestions)
+        function renderDragSequence(q, container) {
+            const seqDiv = document.createElement('div');
+            seqDiv.className = 'seq-container';
+            seqDiv.id = 'drag-sequence-box';
+            seqDiv.ondragover = (e) => e.preventDefault();
+            seqDiv.ondrop = (e) => {
+                e.preventDefault();
+                const id = e.dataTransfer.getData('text/plain');
+                const tile = document.getElementById(id);
+                if (tile) {
+                    seqDiv.appendChild(tile);
+                    updateSequenceAnswer(q);
+                }
+            };
+            
+            const items = [...q.items];
+            items.sort((a,b) => b.value.localeCompare(a.value));
+            
+            items.forEach((item, idx) => {
+                const tile = document.createElement('div');
+                tile.className = 'seq-tile';
+                tile.draggable = true;
+                tile.id = `seq-tile-${idx}`;
+                tile.setAttribute('data-value', item.value);
+                
+                tile.ondragstart = (e) => {
+                    e.dataTransfer.setData('text/plain', tile.id);
+                };
+                
+                const index = document.createElement('div');
+                index.className = 'seq-index';
+                index.innerText = idx + 1;
+                index.id = `seq-index-${idx}`;
+                
+                const txt = document.createElement('div');
+                txt.className = 'seq-text';
+                txt.innerText = item.label;
+                
+                const grip = document.createElement('div');
+                grip.className = 'seq-tile-grip';
+                grip.innerText = '☰';
+                
+                tile.appendChild(index);
+                tile.appendChild(txt);
+                tile.appendChild(grip);
+                
+                // Touch DnD
+                let touchX = 0, touchY = 0;
+                tile.addEventListener('touchstart', (e) => {
+                    const touch = e.touches[0];
+                    touchX = touch.clientX;
+                    touchY = touch.clientY;
+                    tile.style.position = 'relative';
+                    tile.style.zIndex = '1000';
+                });
+                
+                tile.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const diffY = touch.clientY - touchY;
+                    tile.style.transform = `translateY(${diffY}px)`;
+                });
+                
+                tile.addEventListener('touchend', (e) => {
+                    tile.style.position = '';
+                    tile.style.zIndex = '';
+                    tile.style.transform = '';
+                    
+                    const touch = e.changedTouches[0];
+                    const parent = document.getElementById('drag-sequence-box');
+                    if (parent) {
+                        const tiles = Array.from(parent.querySelectorAll('.seq-tile'));
+                        
+                        let insertBeforeElement = null;
+                        for (let tEl of tiles) {
+                            if (tEl === tile) continue;
+                            const rect = tEl.getBoundingClientRect();
+                            if (touch.clientY < rect.top + rect.height/2) {
+                                insertBeforeElement = tEl;
+                                break;
+                            }
+                        }
+                        
+                        if (insertBeforeElement) {
+                            parent.insertBefore(tile, insertBeforeElement);
+                        } else {
+                            parent.appendChild(tile);
+                        }
+                    }
+                    
+                    updateSequenceIndices();
+                    updateSequenceAnswer(q);
+                });
+                
+                seqDiv.appendChild(tile);
+            });
+            
+            container.appendChild(seqDiv);
+            
+            if (q.type === 'drag-sequence-voice') {
+                const voiceSection = document.createElement('div');
+                voiceSection.className = 'voice-section';
+                voiceSection.id = 'sequence-voice-section';
+                voiceSection.style.marginTop = '20px';
+                
+                const triggerBtn = document.createElement('button');
+                triggerBtn.className = 'btn-action-primary';
+                triggerBtn.innerText = currentLanguage === 'en' ? 'Complete Sequence & Explain' : 'ક્રમ પૂર્ણ કરો અને સમજાવો';
+                triggerBtn.onclick = () => {
+                    triggerBtn.style.display = 'none';
+                    triggerOralExplain(q);
+                };
+                
+                voiceSection.appendChild(triggerBtn);
+                
+                const micDiv = document.createElement('div');
+                micDiv.id = 'oral-explain-section';
+                micDiv.className = 'voice-section';
+                micDiv.style.display = 'none';
+                renderMicSection(q, micDiv);
+                
+                voiceSection.appendChild(micDiv);
+                container.appendChild(voiceSection);
+            }
+            
+            updateSequenceIndices();
+            updateSequenceAnswer(q);
+        }
+
+        function updateSequenceIndices() {
+            const seq = document.getElementById('drag-sequence-box');
+            if (!seq) return;
+            const indices = seq.querySelectorAll('.seq-index');
+            indices.forEach((ind, i) => {
+                ind.innerText = i + 1;
+            });
+        }
+
+        function updateSequenceAnswer(q) {
+            const seq = document.getElementById('drag-sequence-box');
+            if (!seq) return;
+            const tiles = seq.querySelectorAll('.seq-tile');
+            const values = [];
+            tiles.forEach(t => {
+                values.push(t.getAttribute('data-value'));
+            });
+            selectedAnswers[currentQuestionIdx] = values;
+        }
+
+        // 7. Spot & Fix grammar sentence
+        function renderSpotFix(q, container) {
+            const label = document.createElement('div');
+            label.className = 'bucket-title';
+            label.innerText = currentLanguage === 'en' ? 'TAP THE WRONG WORD' : 'ખોટા શબ્દ પર ટેપ કરો';
+            label.style.marginBottom = '12px';
+            container.appendChild(label);
+            
+            const sentenceDiv = document.createElement('div');
+            sentenceDiv.className = 'grammar-visual';
+            
+            q.sentence.forEach((word, idx) => {
+                const wordBtn = document.createElement('button');
+                wordBtn.className = 'grammar-word';
+                wordBtn.innerText = word;
+                wordBtn.onclick = () => {
+                    sentenceDiv.querySelectorAll('.grammar-word').forEach(w => w.classList.remove('selected'));
+                    wordBtn.classList.add('selected');
+                    selectedAnswers[currentQuestionIdx] = word;
+                    
+                    if (idx === q.errorWordIndex) {
+                        triggerOralExplain(q);
+                    }
+                };
+                sentenceDiv.appendChild(wordBtn);
+            });
+            
+            container.appendChild(sentenceDiv);
+            
+            const voiceSection = document.createElement('div');
+            voiceSection.className = 'voice-section';
+            voiceSection.id = 'oral-explain-section';
+            voiceSection.style.display = 'none';
+            voiceSection.style.marginTop = '24px';
+            
+            renderMicSection(q, voiceSection);
+            container.appendChild(voiceSection);
+        }
+
+        // 8. Spot & Fix Math Algebra equation
+        function renderSpotFixMath(q, container, visualAid) {
+            if (visualAid) visualAid.style.display = 'flex';
+            
+            const algDiv = document.createElement('div');
+            algDiv.className = 'algebra-visual';
+            
+            q.steps.forEach((step, idx) => {
+                const el = document.createElement('div');
+                el.className = 'algebra-step';
+                el.innerText = step.label;
+                el.onclick = () => {
+                    algDiv.querySelectorAll('.algebra-step').forEach(s => s.classList.remove('selected'));
+                    el.classList.add('selected');
+                    selectedAnswers[currentQuestionIdx] = step.value;
+                    
+                    if (!step.correct) {
+                        triggerOralExplain(q);
+                    }
+                };
+                algDiv.appendChild(el);
+            });
+            
+            if (visualAid) visualAid.appendChild(algDiv);
+            
+            const voiceSection = document.createElement('div');
+            voiceSection.className = 'voice-section';
+            voiceSection.id = 'oral-explain-section';
+            voiceSection.style.display = 'none';
+            voiceSection.style.marginTop = '24px';
+            
+            renderMicSection(q, voiceSection);
+            container.appendChild(voiceSection);
+        }
+
+        // 9. Pure voice explaining (ice melting, photosynthesis)
+        function renderVoiceExplain(q, container) {
+            const voiceBox = document.createElement('div');
+            voiceBox.className = 'voice-section';
+            renderMicSection(q, voiceBox);
+            container.appendChild(voiceBox);
+        }
+
+        function playDingSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(987.77, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1318.51, ctx.currentTime + 0.08);
+                
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) {
+                console.warn("Could not play Web Audio ding sound:", e);
+            }
+        }
+
+        // MICROPHONE COMPONENT CREATOR
+        function renderMicSection(q, container) {
+            const micContainer = document.createElement('div');
+            micContainer.className = 'mic-button-container';
+            
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute('class', 'mic-countdown-svg');
+            svg.setAttribute('width', '90');
+            svg.setAttribute('height', '90');
+            svg.setAttribute('viewBox', '0 0 100 100');
+            
+            const bgCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            bgCircle.setAttribute('class', 'mic-countdown-bg');
+            bgCircle.setAttribute('cx', '50');
+            bgCircle.setAttribute('cy', '50');
+            bgCircle.setAttribute('r', '44');
+            
+            const progCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            progCircle.setAttribute('class', 'mic-countdown-progress');
+            progCircle.setAttribute('id', 'mic-countdown-circle');
+            progCircle.setAttribute('cx', '50');
+            progCircle.setAttribute('cy', '50');
+            progCircle.setAttribute('r', '44');
+            
+            svg.appendChild(bgCircle);
+            svg.appendChild(progCircle);
+            
+            const btn = document.createElement('button');
+            btn.className = 'mic-btn';
+            btn.id = 'quiz-mic-trigger';
+            btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>';
+            btn.onclick = () => toggleVoiceRecord(q);
+            
+            const ring = document.createElement('div');
+            ring.className = 'mic-pulse-ring';
+            
+            micContainer.appendChild(svg);
+            micContainer.appendChild(btn);
+            micContainer.appendChild(ring);
+            
+            const label = document.createElement('div');
+            label.className = 'voice-status-text';
+            label.innerText = t('tapMic');
+            
+            const transcript = document.createElement('div');
+            transcript.className = 'transcription-box';
+            transcript.id = 'transcribe-output-box';
+            transcript.innerText = "...";
+
+            const submitSRBtn = document.createElement('button');
+            submitSRBtn.className = 'btn-submit-sr';
+            submitSRBtn.id = 'btn-submit-sr';
+            submitSRBtn.innerText = currentLanguage === 'en' ? 'Submit Answer' : 'જવાબ સબમિટ કરો';
+            submitSRBtn.style.display = 'none';
+            submitSRBtn.onclick = () => {
+                submitAnswerAndNext();
+            };
+            
+            container.appendChild(micContainer);
+            container.appendChild(label);
+            container.appendChild(transcript);
+            container.appendChild(submitSRBtn);
+        }
+
+        // VOICE RECORDING CONTROLS (SPEECH RECOGNITION)
+        function toggleVoiceRecord(q) {
+            stopAllSpeaking();
+            
+            if (isRecordingState) {
+                stopVoiceRecognition();
+            } else {
+                startVoiceRecognition(q);
+            }
+        }
+
+        function startVoiceRecognition(q) {
+            isRecordingState = true;
+            const trigger = document.getElementById('quiz-mic-trigger');
+            if (trigger) trigger.classList.add('recording');
+            setMascotListening(true);
+            
+            // Update status label
+            const statusLabel = trigger?.parentElement?.parentElement?.querySelector('.voice-status-text');
+            if (statusLabel) {
+                statusLabel.innerText = currentLanguage === 'en' ? 'LISTENING...' : 'સાંભળી રહ્યું છે...';
+                statusLabel.classList.add('active');
+            }
+            
+            const submitBtn = document.getElementById('btn-submit-sr');
+            if (submitBtn) submitBtn.style.display = 'none';
+
+            playDingSound();
+            
+            const circle = document.getElementById('mic-countdown-circle');
+            if (circle) circle.style.strokeDashoffset = 276.46;
+            
+            let micTimeElapsed = 0;
+            const micTimeLimit = 9000; // 9 seconds listening window
+            const intervalMs = 100;
+            
+            if (micCountdownInterval) clearInterval(micCountdownInterval);
+            micCountdownInterval = setInterval(() => {
+                micTimeElapsed += intervalMs;
+                const progress = Math.min(micTimeElapsed / micTimeLimit, 1);
+                const dashoffset = 276.46 - (progress * 276.46);
+                if (circle) circle.style.strokeDashoffset = dashoffset;
+                
+                if (micTimeElapsed >= micTimeLimit) {
+                    clearInterval(micCountdownInterval);
+                    micCountdownInterval = null;
+                    stopVoiceRecognition();
+                    
+                    const outputBox = document.getElementById('transcribe-output-box');
+                    const ans = selectedAnswers[currentQuestionIdx];
+                    if (!ans || ans === "..." || ans === t('listening')) {
+                        triggerSimulationRescue(q, outputBox);
+                    }
+                }
+            }, intervalMs);
+            
+            const outputBox = document.getElementById('transcribe-output-box');
+            if (outputBox) {
+                outputBox.innerText = t('listening');
+                outputBox.classList.remove('has-text');
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                voiceRecognition = new SpeechRecognition();
+                voiceRecognition.continuous = true;  // keep listening
+                voiceRecognition.interimResults = true; // show partial results
+                voiceRecognition.lang = currentLanguage === 'gu' ? 'gu-IN' : 'en-US';
+                
+                voiceRecognition.onresult = (e) => {
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        const t = e.results[i][0].transcript;
+                        if (e.results[i].isFinal) {
+                            finalTranscript += t;
+                        } else {
+                            interimTranscript += t;
+                        }
+                    }
+                    
+                    const displayText = finalTranscript || interimTranscript;
+                    if (outputBox && displayText) {
+                        outputBox.innerText = displayText;
+                        outputBox.classList.add('has-text');
+                    }
+                    
+                    if (finalTranscript) {
+                        if (micCountdownInterval) {
+                            clearInterval(micCountdownInterval);
+                            micCountdownInterval = null;
+                        }
+                        selectedAnswers[currentQuestionIdx] = finalTranscript;
+                        if (submitBtn) submitBtn.style.display = 'inline-block';
+                        stopVoiceRecognition();
+                        setTimeout(() => {
+                            speakAI(currentLanguage === 'en' ? "Understood! Excellent response." : "સમજાયું! ખુબ સરસ જવાબ.");
+                        }, 400);
+                    }
+                };
+                
+                voiceRecognition.onerror = (e) => {
+                    console.warn("Speech recognition error:", e.error);
+                    if (e.error === 'no-speech' || e.error === 'audio-capture' || e.error === 'network') {
+                        // Attempt restart or simulation
+                    }
+                    if (micCountdownInterval) {
+                        clearInterval(micCountdownInterval);
+                        micCountdownInterval = null;
+                    }
+                    stopVoiceRecognition();
+                    const ans = selectedAnswers[currentQuestionIdx];
+                    if (!ans || ans === '...') {
+                        triggerSimulationRescue(q, outputBox);
+                    }
+                };
+                
+                voiceRecognition.onend = () => {
+                    if (isRecordingState && micCountdownInterval) {
+                        // still within time limit, try to restart
+                        try { voiceRecognition.start(); } catch(_) {}
+                    } else {
+                        stopVoiceRecognition();
+                    }
+                };
+                
+                try {
+                    voiceRecognition.start();
+                } catch(e) {
+                    console.warn('SR start error', e);
+                }
+            }
+        }
+
+        function stopVoiceRecognition() {
+            if (autoTranscribeTimeout) clearTimeout(autoTranscribeTimeout);
+            if (micCountdownInterval) {
+                clearInterval(micCountdownInterval);
+                micCountdownInterval = null;
+            }
+            const circle = document.getElementById('mic-countdown-circle');
+            if (circle) circle.style.strokeDashoffset = 276.46;
+            
+            isRecordingState = false;
+            const mic = document.getElementById('quiz-mic-trigger');
+            if (mic) mic.classList.remove('recording');
+            
+            // Reset status label
+            const allStatusLabels = document.querySelectorAll('.voice-status-text');
+            allStatusLabels.forEach(lbl => {
+                lbl.classList.remove('active');
+                lbl.innerText = currentLanguage === 'en' ? 'TAP MIC TO SPEAK' : 'બોલવા માટે MIC ટેપ કરો';
+            });
+            
+            setMascotListening(false);
+            
+            if (voiceRecognition) {
+                try {
+                    voiceRecognition.stop();
+                } catch(_) {}
+                voiceRecognition = null;
+            }
+        }
+
+        // SIMULATION RESCUE IN CASE SPEECH API FAILS
+        function triggerSimulationRescue(q, outputBox) {
+            if (autoTranscribeTimeout) clearTimeout(autoTranscribeTimeout);
+            
+            if (outputBox) outputBox.innerText = currentLanguage === 'en' ? "Simulating student speech response..." : "વિદ્યાર્થી ભાષણ અનુકરણ શરૂ...";
+            
+            autoTranscribeTimeout = setTimeout(() => {
+                const simulatedAnswer = q.expected || (currentLanguage === 'en' 
+                    ? "Yes, I understand this concept. Here is my explanation." 
+                    : "હા, મને આ ખ્યાલ સમજાય છે. અહીં મારી સમજૂતી છે.");
+                
+                if (outputBox) outputBox.innerText = simulatedAnswer;
+                selectedAnswers[currentQuestionIdx] = simulatedAnswer;
+                
+                const submitBtn = document.getElementById('btn-submit-sr');
+                if (submitBtn) submitBtn.style.display = 'inline-block';
+                
+                speakAI(currentLanguage === 'en' ? "Thank you! I have recorded your explanation." : "આભાર! મેં તમારી સમજૂતી રેકોર્ડ કરી છે.");
+                stopVoiceRecognition();
+            }, 3000);
+        }
+
+        // QUESTION NAVIGATION CONTROLLERS
+        function previousQuestion() {
+            if (currentQuestionIdx > 0) {
+                currentQuestionIdx--;
+                renderQuestion();
+            }
+        }
+
+        // SKIP QUESTION
+        function skipQuestion() {
+            selectedAnswers[currentQuestionIdx] = null;
+            submitAnswerAndNext();
+        }
+
+        function submitAnswerAndNext() {
+            const ans = selectedAnswers[currentQuestionIdx];
+            if (ans === undefined || ans === "") {
+                speakAI(currentLanguage === 'en' ? "Please try the activity or record an answer before continuing!" : "કૃપા કરીને આગળ વધતા પહેલા પ્રવૃત્તિનો પ્રયાસ કરો અથવા જવાબ રેકોર્ડ કરો!");
+                setMascotText(currentLanguage === 'en' ? "Please try the activity or record an answer!" : "કૃપા કરીને પ્રવૃત્તિનો પ્રયાસ કરો અથવા જવાબ રેકોર્ડ કરો!");
+                return;
+            }
+            
+            const questionsList = quizzes[currentGradeGroup];
+            if (currentQuestionIdx < questionsList.length - 1) {
+                currentQuestionIdx++;
+                renderQuestion();
+            } else {
+                showCelebration();
+            }
+        }
+
+        // CELEBRATION SUMMARY MODAL
+        function showCelebration() {
+            stopAllSpeaking();
+            stopVoiceRecognition();
+            if (timerInterval) clearInterval(timerInterval);
+            
+            const groupName = currentGradeGroup === '1-3' ? t('early_title') : currentGradeGroup === '4-6' ? t('reasoners_title') : t('abstract_title');
+            const header = document.getElementById('celeb-grade-header');
+            if (header) header.innerText = `${groupName} — Grades ${currentGradeGroup}`;
+            
+            const qList = quizzes[currentGradeGroup];
+            const totalQs = qList ? qList.length : 15;
+            const scoreEl = document.getElementById('celeb-score-num');
+            if (scoreEl) scoreEl.innerText = totalQs;
+
+            const summary = document.getElementById('celeb-summary');
+            if (summary) {
+                summary.innerText = currentLanguage === 'en'
+                    ? `Amazing effort! You answered all ${totalQs} questions. Your responses have been recorded.`
+                    : `ખૂબ સરસ! તમે ${totalQs} પ્રશ્નોના જવાબ આપ્યા. તમારા જવાબો રેકોર્ડ કરવામાં આવ્યા છે.`;
+            }
+            
+            const celebTitle = document.getElementById('celeb-complete-title');
+            if (celebTitle) celebTitle.innerText = currentLanguage === 'en' ? 'Quiz Complete!' : 'ક્વિઝ પૂર્ણ!';
+            
+            const modal = document.getElementById('modal-celebration');
+            if (modal) modal.classList.add('active');
+            
+            setTimeout(() => {
+                speakAI(currentLanguage === 'en' ? "Fantastic work! You have finished the quiz. Well done!" : "ખૂબ સરસ કામ! તમે ક્વિઝ પૂર્ણ કર્યો. ખૂબ સારું!");
+            }, 600);
+        }
+
+        // FINISH SANDBOX
+        function finishAssessmentSandbox() {
+            const modal = document.getElementById('modal-celebration');
+            if (modal) modal.classList.remove('active');
+            
+            const timerEl = document.getElementById('quiz-timer');
+            if (timerEl) timerEl.classList.remove('visible');
+            
+            const subNode = document.getElementById('nav-subject-node');
+            if (subNode) subNode.classList.remove('visible');
+            
+            // RESET STATE
+            currentQuestionIdx = 0;
+            currentGradeGroup = '';
+            selectedAnswers = [];
+            score = 0;
+            if (timerInterval) clearInterval(timerInterval);
+            
+            showScreen('screen-selector');
+        }
+    </script>
+</body>
+</html>
