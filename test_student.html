@@ -7,52 +7,47 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Grandstander:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #5B8DEF; /* Pastel Blue */
-            --primary-hover: #4477D9; /* Slightly deeper blue */
-            --primary-light: #EEF4FF; /* Soft pastel blue bg */
-            --accent: #FF9E8A; /* Soft Coral */
-            --accent-red: #F87474; /* Soft red for errors */
-            --accent-green: #6DBFA0; /* Sage green */
-            --success: #72D4A8; /* Pastel mint green */
-            --warning: #FFE085; /* Pastel yellow */
-            --background: #F5F7FF; /* Lavender-white */
-            --surface: #FFFFFF;
-            --border: #DDE7FF;
-            --border-dark: #BCCFFF;
+            --primary: #6C8EF5; /* Pastel Indigo Blue */
+            --primary-hover: #5B7AE8; /* Slightly deeper */
+            --primary-light: #EEF2FF; /* Very light indigo */
+            --accent: #FF9EC8; /* Pastel Pink */
+            --accent-green: #82E0AA;
+            --accent-red: #FF7B7B;
+            --success: #82E0AA; /* Soft Mint Green */
+            --warning: #FFD97D; /* Pastel Yellow */
+            --background: #F5F0FF; /* Very light lavender */
+            --surface: #ffffff;
+            --border: #E8E0FF;
+            --border-dark: #C5B8F8;
             
-            --text-primary: #1E2A4A; /* Deep navy */
-            --text-secondary: #556080; /* Muted navy */
-            --text-muted: #9EAABF; /* Light slate */
+            --text-primary: #2D2A55; /* Deep purple-navy */
+            --text-secondary: #7B7A9A; /* Muted purple-grey */
+            --text-muted: #B0AECA; /* Light purple-grey */
             
             --r-lg: 24px;
             --r-md: 16px;
             --r-sm: 12px;
-            --card-shadow: 0 10px 30px rgba(91, 141, 239, 0.08);
-            --hover-shadow: 0 16px 40px rgba(91, 141, 239, 0.15);
-
-            /* Grade group accent colors - pastel */
-            --grade-early: #7ECBA1;     /* pastel green */
-            --grade-early-bg: #EDFAF3;
-            --grade-mid: #5B8DEF;       /* pastel blue */
-            --grade-mid-bg: #EEF4FF;
-            --grade-high: #E07B8A;      /* pastel rose */
-            --grade-high-bg: #FFEEF1;
+            --card-shadow: 0 10px 25px rgba(108, 142, 245, 0.08);
+            --hover-shadow: 0 15px 35px rgba(108, 142, 245, 0.15);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Grandstander', cursive;
+            font-family: 'Grandstander', 'Comic Sans MS', cursive;
             -webkit-user-select: none;
             user-select: none;
         }
 
         body {
             background-color: var(--background);
+            background-image: radial-gradient(circle at 15% 20%, rgba(255, 158, 200, 0.12) 0%, transparent 45%),
+                              radial-gradient(circle at 85% 80%, rgba(108, 142, 245, 0.1) 0%, transparent 45%),
+                              radial-gradient(circle at 50% 50%, rgba(130, 224, 170, 0.08) 0%, transparent 60%);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
@@ -345,7 +340,7 @@
         }
 
         .selector-desc {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text-secondary);
             max-width: 540px;
             margin: 8px auto 0;
@@ -366,74 +361,73 @@
 
         .grade-card {
             background: var(--surface);
-            border: 2.5px solid var(--border);
-            border-radius: 28px;
-            padding: 40px 28px;
+            border: 2px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 36px 24px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 260px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            min-height: 240px;
+            transition: all 0.25s ease;
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
 
         .grade-card:hover {
-            transform: translateY(-6px) scale(1.01);
-            box-shadow: 0 20px 40px rgba(91, 141, 239, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.12);
         }
 
         .grade-number {
             font-size: 72px;
             font-weight: 900;
-            line-height: 1;
-            margin-bottom: 10px;
+            line-height: 1.0;
+            margin-bottom: 12px;
             font-family: 'Grandstander', cursive;
+            letter-spacing: -0.02em;
         }
 
         .grade-title-card {
             font-family: 'Grandstander', cursive;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             color: var(--text-primary);
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .grade-select-btn {
+            background: var(--primary);
             color: white;
             border: none;
             width: 100%;
-            max-width: 180px;
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-size: 15px;
+            max-width: 160px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 800;
-            font-family: 'Grandstander', cursive;
             cursor: pointer;
             transition: all 0.2s;
-            letter-spacing: 0.02em;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         }
 
-        .grade-card.early { border-color: var(--grade-early); background: var(--grade-early-bg); }
-        .grade-card.early .grade-number { color: var(--grade-early); }
-        .grade-card.early .grade-select-btn { background: var(--grade-early); box-shadow: 0 6px 18px rgba(126, 203, 161, 0.35); }
-        .grade-card.early:hover { border-color: var(--grade-early); }
-        .grade-card.early:hover .grade-select-btn { background: #5fba8a; }
+        .grade-card.early { border-color: #C9F0DC; background: linear-gradient(135deg, #F0FFF8 0%, #fff 100%); }
+        .grade-card.early .grade-number { color: #4DB87A; }
+        .grade-card.early .grade-select-btn { background: #4DB87A; }
+        .grade-card.early:hover { border-color: #4DB87A; box-shadow: 0 12px 30px rgba(77, 184, 122, 0.18); }
+        .grade-card.early:hover .grade-select-btn { background: #3A9A63; }
 
-        .grade-card.reasoners { border-color: var(--grade-mid); background: var(--grade-mid-bg); }
-        .grade-card.reasoners .grade-number { color: var(--grade-mid); }
-        .grade-card.reasoners .grade-select-btn { background: var(--grade-mid); box-shadow: 0 6px 18px rgba(91, 141, 239, 0.35); }
-        .grade-card.reasoners:hover { border-color: var(--grade-mid); }
+        .grade-card.reasoners { border-color: #C5D5FF; background: linear-gradient(135deg, #F0F4FF 0%, #fff 100%); }
+        .grade-card.reasoners .grade-number { color: var(--primary); }
+        .grade-card.reasoners .grade-select-btn { background: var(--primary); }
+        .grade-card.reasoners:hover { border-color: var(--primary); box-shadow: 0 12px 30px rgba(108, 142, 245, 0.18); }
         .grade-card.reasoners:hover .grade-select-btn { background: var(--primary-hover); }
 
-        .grade-card.abstract { border-color: var(--grade-high); background: var(--grade-high-bg); }
-        .grade-card.abstract .grade-number { color: var(--grade-high); }
-        .grade-card.abstract .grade-select-btn { background: var(--grade-high); box-shadow: 0 6px 18px rgba(224, 123, 138, 0.35); }
-        .grade-card.abstract:hover { border-color: var(--grade-high); }
-        .grade-card.abstract:hover .grade-select-btn { background: #c86070; }
+        .grade-card.abstract { border-color: #FFCDE2; background: linear-gradient(135deg, #FFF0F7 0%, #fff 100%); }
+        .grade-card.abstract .grade-number { color: #F06292; }
+        .grade-card.abstract .grade-select-btn { background: #F06292; }
+        .grade-card.abstract:hover { border-color: #F06292; box-shadow: 0 12px 30px rgba(240, 98, 146, 0.18); }
+        .grade-card.abstract:hover .grade-select-btn { background: #E0487A; }
 
         /* SCREEN 2: AUTHENTIC STUDENT PROFILE DASHBOARD */
         .dashboard-split-layout {
@@ -888,7 +882,7 @@
             font-size: 22px;
             font-weight: 800;
             color: var(--text-primary);
-            line-height: 1.45;
+            line-height: 1.4;
             text-align: center;
             width: 100%;
         }
@@ -939,54 +933,53 @@
         .mcq-option {
             background: white;
             border: 2px solid var(--border);
-            border-radius: 18px;
-            padding: 16px 22px;
+            border-radius: 16px;
+            padding: 18px 24px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 16px;
             transition: all 0.2s ease;
+            color: var(--text-primary);
         }
 
         .mcq-option:hover {
             background: var(--primary-light);
             border-color: var(--primary);
+            color: var(--text-primary);
         }
 
         .mcq-option.selected {
             background: var(--primary-light);
             border-color: var(--primary);
-            box-shadow: 0 4px 14px rgba(91, 141, 239, 0.15);
+            box-shadow: 0 4px 12px rgba(108, 142, 245, 0.12);
+            color: var(--text-primary);
         }
 
         .mcq-star {
             width: 34px;
             height: 34px;
-            min-width: 34px;
             border-radius: 50%;
-            background: var(--background);
+            background: var(--border);
             color: var(--text-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 13px;
             font-weight: 800;
-            font-family: 'Grandstander', cursive;
-            border: 1.5px solid var(--border);
+            flex-shrink: 0;
             transition: all 0.2s;
         }
 
         .mcq-option.selected .mcq-star {
             background: var(--primary);
             color: white;
-            border-color: var(--primary);
         }
 
         .mcq-text {
             font-size: 15px;
             font-weight: 700;
             color: var(--text-primary);
-            font-family: 'Grandstander', cursive;
         }
 
         /* Touch Images MCQ (Early Learners) */
@@ -999,8 +992,8 @@
 
         .image-option {
             background: white;
-            border: 2.5px solid var(--border);
-            border-radius: 22px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
             padding: 24px 16px;
             cursor: pointer;
             text-align: center;
@@ -1009,29 +1002,29 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 4px 10px rgba(108, 142, 245, 0.04);
+            color: var(--text-primary);
         }
 
         .image-option:hover {
             background: var(--primary-light);
             border-color: var(--primary);
             transform: translateY(-3px);
-            box-shadow: var(--hover-shadow);
+            box-shadow: 0 10px 24px rgba(108, 142, 245, 0.12);
+            color: var(--text-primary);
         }
 
         .image-option.selected {
             background: var(--primary-light);
             border-color: var(--primary);
-            box-shadow: 0 8px 24px rgba(91, 141, 239, 0.18);
+            box-shadow: 0 8px 20px rgba(108, 142, 245, 0.15);
+            color: var(--text-primary);
         }
 
         .image-graphic {
-            width: 72px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 40px;
             transition: transform 0.2s;
+            line-height: 1;
         }
 
         .image-option:hover .image-graphic {
@@ -1042,7 +1035,6 @@
             font-size: 14px;
             font-weight: 800;
             color: var(--text-primary);
-            font-family: 'Grandstander', cursive;
         }
 
         /* 2. Drag & Drop Sorting */
@@ -1272,38 +1264,34 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 6px 20px rgba(91, 141, 239, 0.3);
+            box-shadow: 0 6px 20px rgba(108, 142, 245, 0.35);
             z-index: 10;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.2s;
+            position: relative;
         }
 
         .mic-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 10px 28px rgba(91, 141, 239, 0.45);
+            transform: scale(1.07);
+            box-shadow: 0 8px 24px rgba(108, 142, 245, 0.5);
         }
 
         .mic-btn.recording {
-            background: #F87474;
-            box-shadow: 0 6px 24px rgba(248, 116, 116, 0.4);
-            animation: mic-breathe 1.5s ease-in-out infinite;
-        }
-
-        @keyframes mic-breathe {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.06); }
+            background: #FF7B7B;
+            box-shadow: 0 6px 24px rgba(255, 123, 123, 0.4);
         }
 
         .mic-btn svg {
-            fill: white;
+            fill: white !important;
             width: 32px;
             height: 32px;
+            display: block;
         }
 
         .mic-pulse-ring {
             position: absolute;
             width: 100px;
             height: 100px;
-            border: 3px solid rgba(248, 116, 116, 0.4);
+            border: 3px solid rgba(255, 123, 123, 0.4);
             border-radius: 50%;
             z-index: 1;
             opacity: 0;
@@ -1322,43 +1310,39 @@
 
         .voice-status-text {
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-family: 'Grandstander', cursive;
-            margin-top: 4px;
+            letter-spacing: 0.05em;
         }
 
-        .voice-status-text.active {
-            color: #F87474;
+        .mic-btn.recording ~ .voice-status-text {
+            color: #FF7B7B;
         }
 
-        /* Transcription input bar */
+        /* Transcription bubble */
         .transcription-box {
-            background: var(--surface);
+            background: white;
             border: 2px solid var(--border);
-            border-radius: 14px;
-            padding: 12px 18px;
-            font-size: 14px;
+            border-radius: var(--r-md);
+            padding: 12px 20px;
+            font-size: 13px;
             font-style: italic;
             color: var(--text-secondary);
-            min-height: 48px;
+            min-height: 44px;
             width: 100%;
             max-width: 420px;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Grandstander', cursive;
-            transition: border-color 0.2s;
+            box-shadow: 0 2px 8px rgba(108, 142, 245, 0.06);
+            transition: border-color 0.3s;
         }
 
-        .transcription-box.has-text {
+        .transcription-box.active {
             border-color: var(--primary);
             color: var(--text-primary);
-            font-style: normal;
-            font-weight: 600;
         }
 
         .btn-submit-sr {
@@ -1366,23 +1350,22 @@
             padding: 12px 28px;
             font-size: 14px;
             font-weight: 800;
-            font-family: 'Grandstander', cursive;
             color: white;
             background: var(--success);
             border: none;
-            border-radius: 14px;
+            border-radius: var(--r-md);
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(114, 212, 168, 0.35);
+            box-shadow: 0 4px 14px rgba(130, 224, 170, 0.4);
             transition: all 0.2s;
             width: 100%;
-            max-width: 280px;
+            max-width: 260px;
             text-align: center;
-            letter-spacing: 0.03em;
+            font-family: 'Grandstander', cursive;
         }
 
         .btn-submit-sr:hover {
-            background: #5cbf96;
-            box-shadow: 0 6px 20px rgba(114, 212, 168, 0.5);
+            background: #6AC495;
+            box-shadow: 0 6px 18px rgba(130, 224, 170, 0.5);
             transform: translateY(-2px);
         }
 
@@ -1494,10 +1477,9 @@
 
         .btn-action-outline {
             padding: 10px 24px;
-            border-radius: 14px;
+            border-radius: var(--r-sm);
             font-size: 13px;
             font-weight: 800;
-            font-family: 'Grandstander', cursive;
             border: 2px solid var(--primary);
             color: var(--primary);
             background: transparent;
@@ -1507,28 +1489,25 @@
 
         .btn-action-outline:hover {
             background: var(--primary-light);
-            color: var(--primary);
         }
 
         .btn-action-primary {
             padding: 12px 28px;
-            border-radius: 14px;
-            font-size: 14px;
+            border-radius: var(--r-sm);
+            font-size: 13px;
             font-weight: 800;
-            font-family: 'Grandstander', cursive;
             border: none;
             color: white;
             background: var(--primary);
-            box-shadow: 0 4px 14px rgba(91, 141, 239, 0.3);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
             cursor: pointer;
             transition: all 0.2s;
-            letter-spacing: 0.02em;
         }
 
         .btn-action-primary:hover {
             background: var(--primary-hover);
-            box-shadow: 0 6px 18px rgba(91, 141, 239, 0.45);
-            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+            transform: translateY(-1px);
         }
 
         /* SCREEN 4: CELEBRATION MODAL */
@@ -1538,9 +1517,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(26, 23, 56, 0.4);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(45, 42, 85, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             z-index: 100;
             display: none;
             align-items: center;
@@ -1555,33 +1534,34 @@
         }
 
         .celebration-box {
-            background: var(--surface);
+            background: linear-gradient(145deg, #ffffff 0%, #FFF5FC 100%);
             color: var(--text-primary);
-            width: 92%;
+            width: 90%;
             max-width: 520px;
             border-radius: 32px;
-            padding: 40px 36px;
+            padding: 44px 40px;
             text-align: center;
-            box-shadow: 0 30px 60px rgba(91, 141, 239, 0.2);
-            border: 2px solid var(--border);
-            transform: scale(0.88);
+            box-shadow: 0 30px 60px rgba(108, 142, 245, 0.2), 0 0 0 1px rgba(255,255,255,0.8);
+            border: 2px solid #F0E6FF;
+            transform: scale(0.9);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celebration-box::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(255, 158, 200, 0.3) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         .modal-overlay.active .celebration-box {
             transform: scale(1);
-        }
-
-        .celeb-trophy {
-            font-size: 64px;
-            margin-bottom: 8px;
-            display: block;
-            animation: trophy-bounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
-        }
-
-        @keyframes trophy-bounce {
-            from { transform: scale(0) rotate(-15deg); opacity: 0; }
-            to { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
         .celeb-title {
@@ -1589,13 +1569,13 @@
             font-size: 28px;
             font-weight: 900;
             color: var(--primary);
-            letter-spacing: 0.02em;
+            letter-spacing: 0.5px;
             margin-bottom: 8px;
         }
 
         .celeb-subtitle {
             font-family: 'Grandstander', cursive;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
             color: var(--text-primary);
             margin-bottom: 10px;
@@ -1603,75 +1583,37 @@
 
         .celeb-desc {
             font-size: 14px;
-            font-family: 'Grandstander', cursive;
             color: var(--text-secondary);
             line-height: 1.6;
-            margin-bottom: 24px;
-        }
-
-        .celeb-score-ring {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            border: 4px solid var(--primary);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px auto;
-            animation: score-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s both;
-        }
-
-        @keyframes score-pop {
-            from { transform: scale(0); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .celeb-score-num {
-            font-family: 'Grandstander', cursive;
-            font-size: 32px;
-            font-weight: 900;
-            color: var(--primary);
-            line-height: 1;
-        }
-
-        .celeb-score-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            margin-bottom: 28px;
         }
 
         .celeb-badges {
             display: flex;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 28px;
+            gap: 20px;
+            margin-bottom: 32px;
             font-size: 38px;
         }
 
         .btn-finish {
             width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            font-family: 'Grandstander', cursive;
+            padding: 18px;
+            border-radius: var(--r-md);
             font-size: 16px;
-            font-weight: 800;
+            font-weight: 900;
             border: none;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #FF9EC8 100%);
             color: white;
-            box-shadow: 0 6px 18px rgba(91, 141, 239, 0.35);
+            box-shadow: 0 6px 20px rgba(108, 142, 245, 0.35);
             cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 0.03em;
+            transition: all 0.25s;
+            font-family: 'Grandstander', cursive;
         }
 
         .btn-finish:hover {
-            background: var(--primary-hover);
-            box-shadow: 0 8px 22px rgba(91, 141, 239, 0.5);
             transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(108, 142, 245, 0.45);
         }
 
         /* UTILITY ANIMATIONS */
@@ -1701,7 +1643,7 @@
                 </div>
             </div>
             <div class="nav-title-group">
-                <span class="nav-class-title" id="nav-class-header">Miko Test</span>
+                <span class="nav-class-title" id="nav-class-header">Class Sandbox-A</span>
                 <span class="nav-subtitle" id="nav-smartboard-sub">Smart Board Assessment</span>
             </div>
         </div>
@@ -1923,19 +1865,17 @@
     <!-- SCREEN 4: CELEBRATION MODAL -->
     <div id="modal-celebration" class="modal-overlay">
         <div class="celebration-box">
-            <span class="celeb-trophy">🏆</span>
-            <div class="celeb-title" id="celeb-complete-title">Quiz Complete!</div>
-            <div class="celeb-subtitle" id="celeb-grade-header">Grade Group Finished</div>
-
-            <div class="celeb-score-ring">
-                <div class="celeb-score-num" id="celeb-score-num">15</div>
-                <div class="celeb-score-label">Questions</div>
-            </div>
-
+            <div class="celeb-title" id="celeb-complete-title">ASSESSMENT COMPLETE!</div>
+            <div class="celeb-subtitle" id="celeb-grade-header">Grade Group Completed</div>
             <div class="celeb-desc" id="celeb-summary">
-                Amazing effort! You answered all 15 questions. Your responses have been recorded.
+                All evaluation stages have been successfully run! Results and performance markers have been logged and synced.
             </div>
-            <button class="btn-finish" id="btn-celeb-finish" onclick="finishAssessmentSandbox()">Back to Home</button>
+            <div class="celeb-badges" style="display: flex; gap: 16px; justify-content: center; align-items: center; margin: 16px 0;">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#eab308;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path><path d="M12 2a8 8 0 0 0-8 8h16a8 8 0 0 0-8-8z"></path></svg>
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" style="color:#eab308;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#3b82f6;"><path d="M4.5 16.5c-1.5 1.26-2 3.42-2 3.42s2.16-.5 3.42-2"></path><path d="M12 2c2 3.5 1 8.5-1 10.5S2.5 14 2.5 14s1.5-6 5-8 8-4 8-4z"></path><path d="M12 2s4 2 8 8-4 5-8 1z"></path></svg>
+            </div>
+            <button class="btn-finish" id="btn-celeb-finish" onclick="finishAssessmentSandbox()">Back to Portal Home</button>
         </div>
     </div>
 
@@ -2848,7 +2788,7 @@
             isStudentSkipped = false;
             
             // Set class header and week subject
-            const gradeText = group === '1-3' ? 'Miko Test — Grades 1–3' : group === '4-6' ? 'Miko Test — Grades 4–6' : 'Miko Test — Grades 7–9';
+            const gradeText = group === '1-3' ? 'Class 2-A' : group === '4-6' ? 'Class 5-B' : 'Class 8-C';
             const navClassHeader = document.getElementById('nav-class-header');
             if (navClassHeader) navClassHeader.innerText = gradeText;
             
@@ -3083,29 +3023,6 @@
             return str.replace(/[\u{1F300}-\u{1FAFF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{27BF}]|[\u{2B50}]/gu, '');
         }
 
-        let _saraVoice = null;
-        let _gujaratiVoice = null;
-
-        function loadVoices() {
-            const voices = window.speechSynthesis.getVoices();
-            // Try to find Sara or a good English female voice
-            _saraVoice = voices.find(v => v.name.toLowerCase().includes('sara') && v.lang.startsWith('en')) ||
-                         voices.find(v => v.name.toLowerCase().includes('samantha')) ||
-                         voices.find(v => v.name.toLowerCase().includes('victoria')) ||
-                         voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('female')) ||
-                         voices.find(v => v.lang === 'en-US') ||
-                         voices.find(v => v.lang.startsWith('en')) ||
-                         null;
-            // Gujarati voice
-            _gujaratiVoice = voices.find(v => v.lang === 'gu-IN' || v.lang.startsWith('gu')) || null;
-        }
-
-        // Load voices — browsers fire voiceschanged
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
-            loadVoices();
-        }
-
         function speakAI(text) {
             stopAllSpeaking();
             if (!('speechSynthesis' in window)) return;
@@ -3118,14 +3035,11 @@
             
             if (currentLanguage === 'gu') {
                 utterance.lang = 'gu-IN';
-                if (_gujaratiVoice) utterance.voice = _gujaratiVoice;
             } else {
                 utterance.lang = 'en-US';
-                if (_saraVoice) utterance.voice = _saraVoice;
             }
             
-            utterance.rate = 0.88;
-            utterance.pitch = 1.05;
+            utterance.rate = 0.85;
             utterance.onend = () => {
                 setMascotTalking(false);
                 isSpeakingState = false;
@@ -3270,28 +3184,6 @@
 
         // ================= TEMPLATE RENDERING IMPLEMENTATIONS =================
 
-        // Minimal flat cartoon SVG icons for touch options
-        const optionIconSVGs = {
-            lion:    `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="18" fill="#FFCF77"/><circle cx="32" cy="36" r="12" fill="#F9A825"/><ellipse cx="32" cy="48" rx="8" ry="4" fill="#E68900"/><circle cx="26" cy="32" r="3" fill="white"/><circle cx="38" cy="32" r="3" fill="white"/><circle cx="27" cy="32" r="1.5" fill="#333"/><circle cx="39" cy="32" r="1.5" fill="#333"/><path d="M29 40 Q32 43 35 40" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
-            fish:    `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 32 C14 22 28 18 38 32 C28 46 14 42 8 32Z" fill="#81D4FA"/><path d="M38 32 L50 22 L46 32 L50 42 Z" fill="#4FC3F7"/><circle cx="18" cy="30" r="2.5" fill="white"/><circle cx="18" cy="30" r="1.5" fill="#333"/></svg>`,
-            eagle:   `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="36" rx="10" ry="14" fill="#795548"/><path d="M22 28 C10 20 6 30 14 34" fill="#8D6E63"/><path d="M42 28 C54 20 58 30 50 34" fill="#8D6E63"/><circle cx="32" cy="26" r="7" fill="white"/><circle cx="29" cy="25" r="2" fill="#333"/><circle cx="35" cy="25" r="2" fill="#333"/><path d="M30 30 L34 30 L32 34Z" fill="#FFA000"/></svg>`,
-            dog:     `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="38" rx="14" ry="12" fill="#D7A96A"/><circle cx="32" cy="26" r="11" fill="#D7A96A"/><ellipse cx="24" cy="20" rx="5" ry="8" fill="#C49A55"/><ellipse cx="40" cy="20" rx="5" ry="8" fill="#C49A55"/><circle cx="28" cy="26" r="2.5" fill="#333"/><circle cx="36" cy="26" r="2.5" fill="#333"/><ellipse cx="32" cy="31" rx="5" ry="3.5" fill="#C49A55"/><path d="M28 34 Q32 37 36 34" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
-            cat:     `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="32" cy="38" rx="12" ry="11" fill="#BDBDBD"/><circle cx="32" cy="26" r="10" fill="#BDBDBD"/><path d="M22 18 L18 10 L26 16" fill="#BDBDBD"/><path d="M42 18 L46 10 L38 16" fill="#BDBDBD"/><circle cx="28" cy="25" r="2" fill="#333"/><circle cx="36" cy="25" r="2" fill="#333"/><path d="M29 30 Q32 33 35 30" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
-            rose:    `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="36" width="4" height="20" fill="#4CAF50"/><circle cx="32" cy="28" r="12" fill="#F48FB1"/><circle cx="26" cy="22" r="7" fill="#F06292"/><circle cx="38" cy="22" r="7" fill="#F06292"/><circle cx="32" cy="34" r="7" fill="#EC407A"/></svg>`,
-            sun:     `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="12" fill="#FFD54F"/><line x1="32" y1="8" x2="32" y2="14" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="50" x2="32" y2="56" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="8" y1="32" x2="14" y2="32" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="50" y1="32" x2="56" y2="32" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="15" y1="15" x2="19" y2="19" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="45" y1="45" x2="49" y2="49" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="49" y1="15" x2="45" y2="19" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/><line x1="19" y1="49" x2="15" y2="45" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/></svg>`,
-            icecream:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26 38 L32 58 L38 38Z" fill="#FFE082"/><circle cx="24" cy="28" r="12" fill="#F48FB1"/><circle cx="36" cy="24" r="12" fill="#80DEEA"/><circle cx="44" cy="32" r="10" fill="#FFAB91"/></svg>`,
-            snowman: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="46" r="14" fill="white" stroke="#BDBDBD" stroke-width="2"/><circle cx="32" cy="26" r="10" fill="white" stroke="#BDBDBD" stroke-width="2"/><circle cx="29" cy="24" r="1.5" fill="#333"/><circle cx="35" cy="24" r="1.5" fill="#333"/><path d="M30 28 Q32 30 34 28" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M20 22 L12 18" stroke="#795548" stroke-width="3" stroke-linecap="round"/><path d="M44 22 L52 18" stroke="#795548" stroke-width="3" stroke-linecap="round"/></svg>`,
-            square:  `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="12" width="40" height="40" rx="4" fill="#90CAF9" stroke="#42A5F5" stroke-width="2"/></svg>`,
-            circle:  `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="22" fill="#F48FB1" stroke="#E91E63" stroke-width="2"/></svg>`,
-            triangle:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="32,10 56,54 8,54" fill="#A5D6A7" stroke="#4CAF50" stroke-width="2" stroke-linejoin="round"/></svg>`,
-            default: `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="26" fill="#E8F0FE"/><text x="32" y="40" font-size="22" text-anchor="middle" font-family="system-ui" fill="#5B8DEF">?</text></svg>`
-        };
-
-        function getOptionIcon(opt) {
-            const key = (opt.value || '').toLowerCase();
-            return optionIconSVGs[key] || optionIconSVGs[opt.label?.toLowerCase()] || optionIconSVGs.default;
-        }
-
         // 1. Touch Option (early learners)
         function renderTouchImage(q, container) {
             const grid = document.createElement('div');
@@ -3306,15 +3198,15 @@
                     selectedAnswers[currentQuestionIdx] = opt.value;
                 };
                 
-                const iconDiv = document.createElement('div');
-                iconDiv.className = 'image-graphic';
-                iconDiv.innerHTML = getOptionIcon(opt);
+                const emoji = document.createElement('div');
+                emoji.className = 'image-graphic';
+                emoji.innerText = opt.emoji;
                 
                 const label = document.createElement('div');
                 label.className = 'image-label';
                 label.innerText = opt.label;
                 
-                box.appendChild(iconDiv);
+                box.appendChild(emoji);
                 box.appendChild(label);
                 grid.appendChild(box);
             });
@@ -3915,13 +3807,6 @@
             if (trigger) trigger.classList.add('recording');
             setMascotListening(true);
             
-            // Update status label
-            const statusLabel = trigger?.parentElement?.parentElement?.querySelector('.voice-status-text');
-            if (statusLabel) {
-                statusLabel.innerText = currentLanguage === 'en' ? 'LISTENING...' : 'સાંભળી રહ્યું છે...';
-                statusLabel.classList.add('active');
-            }
-            
             const submitBtn = document.getElementById('btn-submit-sr');
             if (submitBtn) submitBtn.style.display = 'none';
 
@@ -3931,7 +3816,7 @@
             if (circle) circle.style.strokeDashoffset = 276.46;
             
             let micTimeElapsed = 0;
-            const micTimeLimit = 9000; // 9 seconds listening window
+            const micTimeLimit = 6000;
             const intervalMs = 100;
             
             if (micCountdownInterval) clearInterval(micCountdownInterval);
@@ -3955,80 +3840,49 @@
             }, intervalMs);
             
             const outputBox = document.getElementById('transcribe-output-box');
-            if (outputBox) {
-                outputBox.innerText = t('listening');
-                outputBox.classList.remove('has-text');
-            }
+            if (outputBox) outputBox.innerText = t('listening');
             
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (SpeechRecognition) {
                 voiceRecognition = new SpeechRecognition();
-                voiceRecognition.continuous = true;  // keep listening
-                voiceRecognition.interimResults = true; // show partial results
+                voiceRecognition.continuous = false;
+                voiceRecognition.interimResults = false;
                 voiceRecognition.lang = currentLanguage === 'gu' ? 'gu-IN' : 'en-US';
                 
                 voiceRecognition.onresult = (e) => {
-                    let interimTranscript = '';
-                    let finalTranscript = '';
-                    for (let i = e.resultIndex; i < e.results.length; i++) {
-                        const t = e.results[i][0].transcript;
-                        if (e.results[i].isFinal) {
-                            finalTranscript += t;
-                        } else {
-                            interimTranscript += t;
-                        }
-                    }
-                    
-                    const displayText = finalTranscript || interimTranscript;
-                    if (outputBox && displayText) {
-                        outputBox.innerText = displayText;
-                        outputBox.classList.add('has-text');
-                    }
-                    
-                    if (finalTranscript) {
-                        if (micCountdownInterval) {
-                            clearInterval(micCountdownInterval);
-                            micCountdownInterval = null;
-                        }
-                        selectedAnswers[currentQuestionIdx] = finalTranscript;
-                        if (submitBtn) submitBtn.style.display = 'inline-block';
-                        stopVoiceRecognition();
-                        setTimeout(() => {
-                            speakAI(currentLanguage === 'en' ? "Understood! Excellent response." : "સમજાયું! ખુબ સરસ જવાબ.");
-                        }, 400);
-                    }
-                };
-                
-                voiceRecognition.onerror = (e) => {
-                    console.warn("Speech recognition error:", e.error);
-                    if (e.error === 'no-speech' || e.error === 'audio-capture' || e.error === 'network') {
-                        // Attempt restart or simulation
-                    }
                     if (micCountdownInterval) {
                         clearInterval(micCountdownInterval);
                         micCountdownInterval = null;
                     }
-                    stopVoiceRecognition();
-                    const ans = selectedAnswers[currentQuestionIdx];
-                    if (!ans || ans === '...') {
-                        triggerSimulationRescue(q, outputBox);
+                    const result = e.results[0][0].transcript;
+                    if (outputBox) outputBox.innerText = `"${result}"`;
+                    selectedAnswers[currentQuestionIdx] = result;
+                    
+                    if (submitBtn) submitBtn.style.display = 'inline-block';
+                    
+                    setTimeout(() => {
+                        speakAI(currentLanguage === 'en' ? "Understood! Excellent response." : "સમજાયું! ખુબ સરસ જવાબ.");
+                    }, 400);
+                };
+                
+                voiceRecognition.onerror = (e) => {
+                    console.error("Speech recognition error:", e);
+                    if (micCountdownInterval) {
+                        clearInterval(micCountdownInterval);
+                        micCountdownInterval = null;
                     }
+                    triggerSimulationRescue(q, outputBox);
                 };
                 
                 voiceRecognition.onend = () => {
-                    if (isRecordingState && micCountdownInterval) {
-                        // still within time limit, try to restart
-                        try { voiceRecognition.start(); } catch(_) {}
-                    } else {
+                    if (!micCountdownInterval) {
                         stopVoiceRecognition();
                     }
                 };
                 
-                try {
-                    voiceRecognition.start();
-                } catch(e) {
-                    console.warn('SR start error', e);
-                }
+                voiceRecognition.start();
+            } else {
+                // If speech recognition not supported, let countdown simulate rescue
             }
         }
 
@@ -4044,13 +3898,6 @@
             isRecordingState = false;
             const mic = document.getElementById('quiz-mic-trigger');
             if (mic) mic.classList.remove('recording');
-            
-            // Reset status label
-            const allStatusLabels = document.querySelectorAll('.voice-status-text');
-            allStatusLabels.forEach(lbl => {
-                lbl.classList.remove('active');
-                lbl.innerText = currentLanguage === 'en' ? 'TAP MIC TO SPEAK' : 'બોલવા માટે MIC ટેપ કરો';
-            });
             
             setMascotListening(false);
             
@@ -4123,29 +3970,18 @@
             
             const groupName = currentGradeGroup === '1-3' ? t('early_title') : currentGradeGroup === '4-6' ? t('reasoners_title') : t('abstract_title');
             const header = document.getElementById('celeb-grade-header');
-            if (header) header.innerText = `${groupName} — Grades ${currentGradeGroup}`;
+            if (header) header.innerText = `${groupName} (${currentGradeGroup})`;
             
             const qList = quizzes[currentGradeGroup];
-            const totalQs = qList ? qList.length : 15;
-            const scoreEl = document.getElementById('celeb-score-num');
-            if (scoreEl) scoreEl.innerText = totalQs;
-
             const summary = document.getElementById('celeb-summary');
-            if (summary) {
-                summary.innerText = currentLanguage === 'en'
-                    ? `Amazing effort! You answered all ${totalQs} questions. Your responses have been recorded.`
-                    : `ખૂબ સરસ! તમે ${totalQs} પ્રશ્નોના જવાબ આપ્યા. તમારા જવાબો રેકોર્ડ કરવામાં આવ્યા છે.`;
-            }
-            
-            const celebTitle = document.getElementById('celeb-complete-title');
-            if (celebTitle) celebTitle.innerText = currentLanguage === 'en' ? 'Quiz Complete!' : 'ક્વિઝ પૂર્ણ!';
+            if (summary) summary.innerText = t('celeb_desc');
             
             const modal = document.getElementById('modal-celebration');
             if (modal) modal.classList.add('active');
             
             setTimeout(() => {
-                speakAI(currentLanguage === 'en' ? "Fantastic work! You have finished the quiz. Well done!" : "ખૂબ સરસ કામ! તમે ક્વિઝ પૂર્ણ કર્યો. ખૂબ સારું!");
-            }, 600);
+                speakAI(currentLanguage === 'en' ? "Fantastic work! You have finished the test sandbox. Goodbye!" : "ખૂબ સરસ કામ! તમે પરીક્ષણ સેન્ડબોક્સ પૂર્ણ કર્યું છે. આવજો!");
+            }, 500);
         }
 
         // FINISH SANDBOX
