@@ -1354,29 +1354,6 @@
             box-shadow: 0 0 10px rgba(108, 142, 245, 0.2);
         }
 
-        .btn-simulate-speech {
-            margin-top: 8px;
-            padding: 6px 16px;
-            font-size: 11px;
-            font-weight: 800;
-            color: var(--primary);
-            background: var(--primary-light);
-            border: 1.5px solid var(--border-dark);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Grandstander', cursive;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .btn-simulate-speech:hover {
-            background: #dbd7ff;
-            transform: scale(1.05);
-        }
 
         .btn-submit-sr {
             margin-top: 14px;
@@ -3069,6 +3046,7 @@
             
             const cleanText = stripEmojis(text);
             const utterance = new SpeechSynthesisUtterance(cleanText);
+            window.activeUtterance = utterance; // Keep global reference to avoid GC bug
             
             if (currentLanguage === 'gu') {
                 utterance.lang = 'gu-IN';
@@ -3863,7 +3841,6 @@
             
             const progCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             progCircle.setAttribute('class', 'mic-countdown-progress');
-            progCircle.setAttribute('id', 'mic-countdown-circle');
             progCircle.setAttribute('cx', '50');
             progCircle.setAttribute('cy', '50');
             progCircle.setAttribute('r', '44');
@@ -3883,15 +3860,6 @@
             micContainer.appendChild(svg);
             micContainer.appendChild(btn);
             micContainer.appendChild(ring);
-            
-            const simBtn = document.createElement('button');
-            simBtn.className = 'btn-simulate-speech';
-            simBtn.id = 'quiz-sim-speech-btn';
-            simBtn.innerHTML = `
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;display:block;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                <span>${currentLanguage === 'en' ? 'Simulate Voice' : 'અવાજ સિમ્યુલેટ કરો'}</span>
-            `;
-            simBtn.onclick = () => simulateStudentVoice(q);
             
             const label = document.createElement('div');
             label.className = 'voice-status-text';
@@ -3918,7 +3886,6 @@
             };
             
             container.appendChild(micContainer);
-            container.appendChild(simBtn);
             container.appendChild(label);
             container.appendChild(transcript);
             container.appendChild(submitSRBtn);
@@ -3944,18 +3911,21 @@
             if (trigger) trigger.classList.add('recording');
             setMascotListening(true);
             
-            const statusLabel = document.getElementById('voice-status-label');
+            const section = trigger ? trigger.closest('.voice-section') : null;
+            const statusLabel = section ? section.querySelector('#voice-status-label') : null;
+            const outputBox = section ? section.querySelector('#transcribe-output-box') : null;
+            const submitBtn = section ? section.querySelector('#btn-submit-sr') : null;
+            const circle = section ? section.querySelector('.mic-countdown-progress') : null;
+            
             if (statusLabel) {
                 statusLabel.innerText = currentLanguage === 'en' ? 'Listening... speak now' : 'સાંભળી રહ્યું છે... હવે બોલો';
                 statusLabel.classList.add('active');
             }
             
-            const submitBtn = document.getElementById('btn-submit-sr');
             if (submitBtn) submitBtn.style.display = 'inline-block';
 
             playDingSound();
             
-            const circle = document.getElementById('mic-countdown-circle');
             if (circle) circle.style.strokeDashoffset = 276.46;
             
             let micTimeElapsed = 0;
@@ -3975,7 +3945,6 @@
                     micCountdownInterval = null;
                     stopVoiceRecognition();
                     
-                    const outputBox = document.getElementById('transcribe-output-box');
                     const ans = selectedAnswers[currentQuestionIdx];
                     if (ans && ans.trim() !== "" && ans.trim() !== "..." && ans.trim() !== t('listening')) {
                         const confirmMsg = currentLanguage === 'en' 
@@ -3992,7 +3961,6 @@
                 }
             }, intervalMs);
             
-            const outputBox = document.getElementById('transcribe-output-box');
             if (outputBox) {
                 outputBox.value = "";
                 outputBox.placeholder = t('listening');
@@ -4043,7 +4011,7 @@
                             if (outputBox) outputBox.value = "Mic blocked. Please allow mic permission in your URL bar.";
                         } else if (e.error === 'network') {
                             statusLabel.innerText = "Network Error.";
-                            if (outputBox) outputBox.value = "Google Speech Recognition server connection failed. Please type your answer directly or use the 'Simulate Voice' button.";
+                            if (outputBox) outputBox.value = "Google Speech Recognition server connection failed. Please type your answer directly in this box.";
                         } else if (e.error === 'no-speech') {
                             // ignore no-speech
                         } else {
@@ -4075,22 +4043,21 @@
 
         function stopVoiceRecognition() {
             if (autoTranscribeTimeout) clearTimeout(autoTranscribeTimeout);
-            if (simulationInterval) {
-                clearInterval(simulationInterval);
-                simulationInterval = null;
-            }
             if (micCountdownInterval) {
                 clearInterval(micCountdownInterval);
                 micCountdownInterval = null;
             }
-            const circle = document.getElementById('mic-countdown-circle');
-            if (circle) circle.style.strokeDashoffset = 276.46;
             
             isRecordingState = false;
             const mic = document.getElementById('quiz-mic-trigger');
             if (mic) mic.classList.remove('recording');
             
-            const statusLabel = document.getElementById('voice-status-label');
+            const section = mic ? mic.closest('.voice-section') : null;
+            const statusLabel = section ? section.querySelector('#voice-status-label') : null;
+            const circle = section ? section.querySelector('.mic-countdown-progress') : null;
+            
+            if (circle) circle.style.strokeDashoffset = 276.46;
+            
             if (statusLabel) {
                 statusLabel.classList.remove('active');
                 statusLabel.innerText = currentLanguage === 'en' ? 'TAP MIC TO SPEAK' : 'બોલવા માટે MIC ટેપ કરો';
@@ -4104,90 +4071,6 @@
                 } catch(_) {}
                 voiceRecognition = null;
             }
-        }
-
-        function simulateStudentVoice(q) {
-            stopVoiceRecognition();
-            stopAllSpeaking();
-            
-            isRecordingState = true;
-            const trigger = document.getElementById('quiz-mic-trigger');
-            if (trigger) trigger.classList.add('recording');
-            setMascotListening(true);
-            
-            const submitBtn = document.getElementById('btn-submit-sr');
-            if (submitBtn) submitBtn.style.display = 'inline-block';
-            
-            playDingSound();
-            
-            const circle = document.getElementById('mic-countdown-circle');
-            if (circle) circle.style.strokeDashoffset = 276.46;
-            
-            const outputBox = document.getElementById('transcribe-output-box');
-            const statusLabel = document.getElementById('voice-status-label');
-            if (outputBox) {
-                outputBox.value = "";
-                outputBox.placeholder = currentLanguage === 'en' ? "Simulating speech..." : "અવાજ સિમ્યુલેટ થઈ રહ્યો છે...";
-            }
-            if (statusLabel) {
-                statusLabel.innerText = currentLanguage === 'en' ? "Simulating speech..." : "અવાજ સિમ્યુલેટ થઈ રહ્યો છે...";
-                statusLabel.classList.add('active');
-            }
-            
-            const simulatedText = q.expected || (currentLanguage === 'en' 
-                ? "This is a simulated speech response demonstrating the answer." 
-                : "આ એક મોખિક જવાબ દર્શાવતો સિમ્યુલેટેડ અવાજ પ્રતિભાવ છે.");
-            
-            const words = simulatedText.split(" ");
-            let currentWordIdx = 0;
-            let currentPhrase = "";
-            
-            let micTimeElapsed = 0;
-            const micTimeLimit = 10000;
-            const intervalMs = 100;
-            
-            if (micCountdownInterval) clearInterval(micCountdownInterval);
-            micCountdownInterval = setInterval(() => {
-                micTimeElapsed += intervalMs;
-                const progress = Math.min(micTimeElapsed / micTimeLimit, 1);
-                const dashoffset = 276.46 - (progress * 276.46);
-                if (circle) circle.style.strokeDashoffset = dashoffset;
-                
-                if (micTimeElapsed >= micTimeLimit) {
-                    clearInterval(micCountdownInterval);
-                    micCountdownInterval = null;
-                    stopVoiceRecognition();
-                    
-                    const ans = selectedAnswers[currentQuestionIdx];
-                    if (ans && ans.trim() !== "" && ans.trim() !== "...") {
-                        const confirmMsg = currentLanguage === 'en' 
-                            ? "Time is up! Do you want to submit this response?" 
-                            : "સમય પૂરો થઈ ગયો છે! શું તમે આ પ્રતિભાવ સબમિટ કરવા માંગો છો?";
-                        if (confirm(confirmMsg)) {
-                            submitAnswerAndNext();
-                        }
-                    } else {
-                        if (outputBox) outputBox.value = "";
-                        selectedAnswers[currentQuestionIdx] = "";
-                        updateNextButtonState();
-                    }
-                }
-            }, intervalMs);
-            
-            if (simulationInterval) clearInterval(simulationInterval);
-            simulationInterval = setInterval(() => {
-                if (currentWordIdx < words.length && isRecordingState) {
-                    currentPhrase += (currentWordIdx === 0 ? "" : " ") + words[currentWordIdx];
-                    if (outputBox) outputBox.value = currentPhrase;
-                    if (statusLabel) statusLabel.innerText = currentPhrase;
-                    selectedAnswers[currentQuestionIdx] = currentPhrase;
-                    updateNextButtonState();
-                    currentWordIdx++;
-                } else {
-                    clearInterval(simulationInterval);
-                    simulationInterval = null;
-                }
-            }, 300);
         }
 
         // QUESTION NAVIGATION CONTROLLERS
