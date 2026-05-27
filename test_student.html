@@ -2010,9 +2010,9 @@
                     text_en: "Tap the animal that lives in water.",
                     text_gu: "પાણીમાં રહેતા પ્રાણી પર ટેપ કરો.",
                     options: [
-                        { label: 'Lion', value: 'lion', correct: false },
-                        { label: 'Fish', value: 'fish', correct: true },
-                        { label: 'Eagle', value: 'eagle', correct: false }
+                        { label: 'Lion', value: 'lion', correct: false, img: './assets/images/lion.png' },
+                        { label: 'Fish', value: 'fish', correct: true, img: './assets/images/fish.png' },
+                        { label: 'Eagle', value: 'eagle', correct: false, img: './assets/images/eagle.png' }
                     ]
                 },
                 {
@@ -2022,10 +2022,10 @@
                     text_en: "Tap the item that is NOT an animal.",
                     text_gu: "જે પ્રાણી નથી તે વસ્તુ પર ટેપ કરો.",
                     options: [
-                        { label: 'Dog', value: 'dog', correct: false },
-                        { label: 'Cat', value: 'cat', correct: false },
-                        { label: 'Rose', value: 'rose', correct: true },
-                        { label: 'Fish', value: 'fish', correct: false }
+                        { label: 'Dog', value: 'dog', correct: false, img: './assets/images/dog.png' },
+                        { label: 'Cat', value: 'cat', correct: false, img: './assets/images/cat.png' },
+                        { label: 'Rose', value: 'rose', correct: true, img: './assets/images/rose.png' },
+                        { label: 'Fish', value: 'fish', correct: false, img: './assets/images/fish.png' }
                     ]
                 },
                 {
@@ -2073,9 +2073,9 @@
                     text_en: "Which of these is hot?",
                     text_gu: "આમાંથી કઈ વસ્તુ ગરમ છે?",
                     options: [
-                        { label: 'Ice Cream', value: 'icecream', correct: false },
-                        { label: 'The Sun', value: 'sun', correct: true },
-                        { label: 'Snowman', value: 'snowman', correct: false }
+                        { label: 'Ice Cream', value: 'icecream', correct: false, img: './assets/images/ice_cream.png' },
+                        { label: 'The Sun', value: 'sun', correct: true, img: './assets/images/sun.png' },
+                        { label: 'Snowman', value: 'snowman', correct: false, img: './assets/images/snowman.png' }
                     ]
                 },
                 {
@@ -2147,9 +2147,9 @@
                     text_en: "Which animal flies in the sky?",
                     text_gu: "કયું પ્રાણી આકાશમાં ઉડે છે?",
                     options: [
-                        { label: 'Fish', value: 'fish', correct: false },
-                        { label: 'Eagle', value: 'eagle', correct: true },
-                        { label: 'Frog', value: 'frog', correct: false }
+                        { label: 'Fish', value: 'fish', correct: false, img: './assets/images/fish.png' },
+                        { label: 'Eagle', value: 'eagle', correct: true, img: './assets/images/eagle.png' },
+                        { label: 'Frog', value: 'frog', correct: false, img: './assets/images/frog.png' }
                     ]
                 },
                 {
@@ -2171,9 +2171,9 @@
                     text_en: "Choose the rhyming word for CAT.",
                     text_gu: "CAT (કેટ) સાથે પ્રાસ બેસતો શબ્દ પસંદ કરો.",
                     options: [
-                        { label: 'Dog', value: 'dog', correct: false },
-                        { label: 'Hat', value: 'hat', correct: true },
-                        { label: 'Pig', value: 'pig', correct: false }
+                        { label: 'Dog', value: 'dog', correct: false, img: './assets/images/dog.png' },
+                        { label: 'Hat', value: 'hat', correct: true, img: './assets/images/hat.png' },
+                        { label: 'Pig', value: 'pig', correct: false, img: './assets/images/pig.png' }
                     ]
                 },
                 {
@@ -3184,7 +3184,7 @@
 
         // ================= TEMPLATE RENDERING IMPLEMENTATIONS =================
 
-        // 1. Touch Option (early learners)
+        // 1. Touch Option (early learners) - shows AI image if available, styled text otherwise
         function renderTouchImage(q, container) {
             const grid = document.createElement('div');
             grid.className = 'image-mcq-grid';
@@ -3198,16 +3198,37 @@
                     selectedAnswers[currentQuestionIdx] = opt.value;
                 };
                 
-                const emoji = document.createElement('div');
-                emoji.className = 'image-graphic';
-                emoji.innerText = opt.emoji;
+                if (opt.img) {
+                    // Show AI-generated cartoon image
+                    const imgWrap = document.createElement('div');
+                    imgWrap.className = 'image-graphic';
+                    imgWrap.style.cssText = 'width:80px;height:80px;display:flex;align-items:center;justify-content:center;';
+                    
+                    const img = document.createElement('img');
+                    img.src = opt.img;
+                    img.alt = opt.label;
+                    img.style.cssText = 'width:100%;height:100%;object-fit:contain;border-radius:8px;';
+                    img.onerror = () => {
+                        // Fallback to styled label text if image fails
+                        imgWrap.innerHTML = `<div style="font-size:32px;font-weight:900;color:var(--primary);">${opt.label[0]}</div>`;
+                    };
+                    imgWrap.appendChild(img);
+                    box.appendChild(imgWrap);
+                    // Do NOT add label text when image is present
+                } else {
+                    // No image: show styled text/number/letter as the visual
+                    const textVisual = document.createElement('div');
+                    textVisual.className = 'image-graphic';
+                    textVisual.style.cssText = 'width:80px;height:80px;display:flex;align-items:center;justify-content:center;background:var(--primary-light);border-radius:16px;font-size:28px;font-weight:900;color:var(--primary);font-family:Grandstander,cursive;';
+                    textVisual.innerText = opt.label;
+                    box.appendChild(textVisual);
+                    // Also add label below for text options
+                    const label = document.createElement('div');
+                    label.className = 'image-label';
+                    label.innerText = opt.label;
+                    box.appendChild(label);
+                }
                 
-                const label = document.createElement('div');
-                label.className = 'image-label';
-                label.innerText = opt.label;
-                
-                box.appendChild(emoji);
-                box.appendChild(label);
                 grid.appendChild(box);
             });
             container.appendChild(grid);
