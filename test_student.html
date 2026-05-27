@@ -1142,6 +1142,13 @@
             cursor: grabbing;
         }
 
+        .seq-tile.dragging {
+            opacity: 0.5;
+            border: 2px dashed var(--primary) !important;
+            background: var(--primary-light) !important;
+            box-shadow: 0 4px 10px rgba(108, 142, 245, 0.15);
+        }
+
         .seq-index {
             width: 24px;
             height: 24px;
@@ -1326,23 +1333,49 @@
             border: 2px solid var(--border);
             border-radius: var(--r-md);
             padding: 12px 20px;
-            font-size: 13px;
-            font-style: italic;
-            color: var(--text-secondary);
-            min-height: 44px;
+            font-size: 14px;
+            font-style: normal;
+            color: var(--text-primary);
+            min-height: 80px;
             width: 100%;
             max-width: 420px;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             box-shadow: 0 2px 8px rgba(108, 142, 245, 0.06);
             transition: border-color 0.3s;
+            font-family: 'Grandstander', 'Comic Sans MS', cursive;
+            resize: none;
+            outline: none;
+            display: block;
+            margin: 0 auto;
         }
 
         .transcription-box.active {
             border-color: var(--primary);
-            color: var(--text-primary);
+            box-shadow: 0 0 10px rgba(108, 142, 245, 0.2);
+        }
+
+        .btn-simulate-speech {
+            margin-top: 8px;
+            padding: 6px 16px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--primary);
+            background: var(--primary-light);
+            border: 1.5px solid var(--border-dark);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Grandstander', cursive;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .btn-simulate-speech:hover {
+            background: #dbd7ff;
+            transform: scale(1.05);
         }
 
         .btn-submit-sr {
@@ -1510,6 +1543,14 @@
             transform: translateY(-1px);
         }
 
+        .btn-action-primary.inactive {
+            background: #D1D5DB !important;
+            color: #9CA3AF !important;
+            box-shadow: none !important;
+            cursor: pointer !important;
+            transform: none !important;
+        }
+
         /* SCREEN 4: CELEBRATION MODAL */
         .modal-overlay {
             position: fixed;
@@ -1633,14 +1674,8 @@
     <!-- NAVBAR (Light Theme) -->
     <header class="navbar">
         <div class="nav-left">
-            <div class="miko-mini-logo">
-                <div class="mini-headband"></div>
-                <div class="mini-headphones-l"></div>
-                <div class="mini-headphones-r"></div>
-                <div class="mini-face">
-                    <div class="mini-eye"></div>
-                    <div class="mini-eye"></div>
-                </div>
+            <div class="miko-mini-logo" style="background: none; box-shadow: none; border: none; width: auto; height: auto; display: flex; align-items: center; justify-content: center;">
+                <img src="./assets/images/miko.png" style="width:44px;height:44px;object-fit:contain;border-radius:10px;">
             </div>
             <div class="nav-title-group">
                 <span class="nav-class-title" id="nav-class-header">Class Sandbox-A</span>
@@ -1901,6 +1936,7 @@
 
         // Custom transcribing emulator fallback
         let autoTranscribeTimeout = null;
+        let simulationInterval = null;
         let shouldAutoStartMicAfterSpeaking = false;
         let micCountdownInterval = null;
 
@@ -2060,10 +2096,11 @@
                     type: 'touch-image',
                     text_en: "How many apples are shown here?",
                     text_gu: "અહીં કેટલા સફરજન દર્શાવેલ છે?",
+                    illustration: 'apples',
                     options: [
-                        { label: '2', value: '2', correct: false },
-                        { label: '3', value: '3', correct: true },
-                        { label: '4', value: '4', correct: false }
+                        { label: '2', value: '2', correct: false, emoji: '🍏🍏' },
+                        { label: '3', value: '3', correct: true, emoji: '🍎🍎🍎' },
+                        { label: '4', value: '4', correct: false, emoji: '🍏🍏🍏🍏' }
                     ]
                 },
                 {
@@ -2085,9 +2122,9 @@
                     text_en: "Which shape is a circle?",
                     text_gu: "કયો આકાર ગોળ છે?",
                     options: [
-                        { label: 'Square', value: 'square', correct: false },
-                        { label: 'Circle', value: 'circle', correct: true },
-                        { label: 'Triangle', value: 'triangle', correct: false }
+                        { label: 'Square', value: 'square', correct: false, emoji: '🟥' },
+                        { label: 'Circle', value: 'circle', correct: true, emoji: '🔵' },
+                        { label: 'Triangle', value: 'triangle', correct: false, emoji: '🔺' }
                     ]
                 },
                 {
@@ -2097,9 +2134,9 @@
                     text_en: "Which letter is a vowel?",
                     text_gu: "કયો અક્ષર સ્વર છે?",
                     options: [
-                        { label: 'Letter B', value: 'b', correct: false },
-                        { label: 'Letter E', value: 'e', correct: true },
-                        { label: 'Letter K', value: 'k', correct: false }
+                        { label: 'Letter B', value: 'b', correct: false, emoji: '🐝' },
+                        { label: 'Letter E', value: 'e', correct: true, emoji: '🐘' },
+                        { label: 'Letter K', value: 'k', correct: false, emoji: '🪁' }
                     ]
                 },
                 {
@@ -2113,10 +2150,10 @@
                         { id: 'wild', label_en: 'Wild', label_gu: 'જંગલી' }
                     ],
                     items: [
-                        { label: 'Cow', value: 'cow', target: 'domestic' },
-                        { label: 'Tiger', value: 'tiger', target: 'wild' },
-                        { label: 'Dog', value: 'dog', target: 'domestic' },
-                        { label: 'Lion', value: 'lion', target: 'wild' }
+                        { label: 'Cow', value: 'cow', target: 'domestic', emoji: '🐄' },
+                        { label: 'Tiger', value: 'tiger', target: 'wild', emoji: '🐅' },
+                        { label: 'Dog', value: 'dog', target: 'domestic', img: './assets/images/dog.png' },
+                        { label: 'Lion', value: 'lion', target: 'wild', img: './assets/images/lion.png' }
                     ]
                 },
                 {
@@ -2126,9 +2163,9 @@
                     text_en: "What is 2 + 3?",
                     text_gu: "૨ + ૩ કેટલા થાય?",
                     options: [
-                        { label: '4', value: '4', correct: false },
-                        { label: '5', value: '5', correct: true },
-                        { label: '6', value: '6', correct: false }
+                        { label: '4', value: '4', correct: false, emoji: '🍀' },
+                        { label: '5', value: '5', correct: true, emoji: '🖐️' },
+                        { label: '6', value: '6', correct: false, emoji: '🎲' }
                     ]
                 },
                 {
@@ -2159,9 +2196,9 @@
                     text_en: "Which is the biggest number?",
                     text_gu: "સૌથી મોટી સંખ્યા કઈ છે?",
                     options: [
-                        { label: 'Number 5', value: '5', correct: false },
-                        { label: 'Number 2', value: '2', correct: false },
-                        { label: 'Number 9', value: '9', correct: true }
+                        { label: 'Number 5', value: '5', correct: false, emoji: '🖐️' },
+                        { label: 'Number 2', value: '2', correct: false, emoji: '✌️' },
+                        { label: 'Number 9', value: '9', correct: true, emoji: '🎈' }
                     ]
                 },
                 {
@@ -2213,12 +2250,12 @@
                         { id: 'gas', label_en: 'Gas', label_gu: 'વાયુ' }
                     ],
                     items: [
-                        { label: 'Ice', value: 'ice', target: 'solid' },
-                        { label: 'Water', value: 'water', target: 'liquid' },
-                        { label: 'Steam', value: 'steam', target: 'gas' },
-                        { label: 'Wood', value: 'wood', target: 'solid' },
-                        { label: 'Milk', value: 'milk', target: 'liquid' },
-                        { label: 'Oxygen', value: 'oxygen', target: 'gas' }
+                        { label: 'Ice', value: 'ice', target: 'solid', emoji: '❄️' },
+                        { label: 'Water', value: 'water', target: 'liquid', emoji: '💧' },
+                        { label: 'Steam', value: 'steam', target: 'gas', emoji: '💨' },
+                        { label: 'Wood', value: 'wood', target: 'solid', emoji: '🪵' },
+                        { label: 'Milk', value: 'milk', target: 'liquid', emoji: '🥛' },
+                        { label: 'Oxygen', value: 'oxygen', target: 'gas', emoji: '💨' }
                     ]
                 },
                 {
@@ -2228,10 +2265,10 @@
                     text_en: "Arrange the Water Cycle stages in the correct sequence.",
                     text_gu: "જળચક્રના તબક્કાઓને સાચા ક્રમમાં ગોઠવો.",
                     items: [
-                        { label: 'Evaporation', value: '1' },
-                        { label: 'Condensation', value: '2' },
-                        { label: 'Precipitation', value: '3' },
-                        { label: 'Collection', value: '4' }
+                        { label: 'Evaporation', value: '1', emoji: '☀️' },
+                        { label: 'Condensation', value: '2', emoji: '☁️' },
+                        { label: 'Precipitation', value: '3', emoji: '🌧️' },
+                        { label: 'Collection', value: '4', emoji: '🌊' }
                     ]
                 },
                 {
@@ -3070,9 +3107,9 @@
             const questionsList = quizzes[currentGradeGroup];
             if (questionsList && questionsList[currentQuestionIdx]) {
                 const q = questionsList[currentQuestionIdx];
-                const qText = currentLanguage === 'en' ? q.text_en : q.text_gu;
+                const questionString = currentLanguage === 'en' ? q.text_en : q.text_gu;
                 shouldAutoStartMicAfterSpeaking = true;
-                speakAI(qText);
+                speakAI(questionString);
             }
         }
 
@@ -3136,11 +3173,27 @@
                 }
             }, 300);
 
-            // Visual aid default hide
+            // Visual aid default hide/show
             const visualAid = document.getElementById('visual-aid-container');
             if (visualAid) {
                 visualAid.innerHTML = '';
-                visualAid.style.display = 'none';
+                if (q.illustration && q.type !== 'voice-describe') {
+                    visualAid.style.display = 'flex';
+                    visualAid.style.justifyContent = 'center';
+                    visualAid.style.marginBottom = '20px';
+                    
+                    const img = document.createElement('img');
+                    img.src = `./assets/images/${q.illustration}.png`;
+                    img.alt = q.illustration;
+                    img.style.maxHeight = '140px';
+                    img.style.objectFit = 'contain';
+                    img.style.borderRadius = '12px';
+                    img.style.border = '2px solid var(--border-dark)';
+                    
+                    visualAid.appendChild(img);
+                } else {
+                    visualAid.style.display = 'none';
+                }
             }
 
             // Load interface zone
@@ -3180,6 +3233,7 @@
                         break;
                 }
             }
+            updateNextButtonState();
         }
 
         // ================= TEMPLATE RENDERING IMPLEMENTATIONS =================
@@ -3196,6 +3250,7 @@
                     grid.querySelectorAll('.image-option').forEach(o => o.classList.remove('selected'));
                     box.classList.add('selected');
                     selectedAnswers[currentQuestionIdx] = opt.value;
+                    updateNextButtonState();
                 };
                 
                 if (opt.img) {
@@ -3214,7 +3269,13 @@
                     };
                     imgWrap.appendChild(img);
                     box.appendChild(imgWrap);
-                    // Do NOT add label text when image is present
+                } else if (opt.emoji) {
+                    // Show Emoji
+                    const emojiVisual = document.createElement('div');
+                    emojiVisual.className = 'image-graphic';
+                    emojiVisual.style.cssText = 'width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:44px;';
+                    emojiVisual.innerText = opt.emoji;
+                    box.appendChild(emojiVisual);
                 } else {
                     // No image: show styled text/number/letter as the visual
                     const textVisual = document.createElement('div');
@@ -3222,11 +3283,6 @@
                     textVisual.style.cssText = 'width:80px;height:80px;display:flex;align-items:center;justify-content:center;background:var(--primary-light);border-radius:16px;font-size:28px;font-weight:900;color:var(--primary);font-family:Grandstander,cursive;';
                     textVisual.innerText = opt.label;
                     box.appendChild(textVisual);
-                    // Also add label below for text options
-                    const label = document.createElement('div');
-                    label.className = 'image-label';
-                    label.innerText = opt.label;
-                    box.appendChild(label);
                 }
                 
                 grid.appendChild(box);
@@ -3296,9 +3352,30 @@
             q.items.forEach((item, idx) => {
                 const tile = document.createElement('div');
                 tile.className = 'drag-tile';
-                tile.innerText = item.label;
+                tile.style.display = 'flex';
+                tile.style.alignItems = 'center';
+                tile.style.gap = '8px';
                 tile.draggable = true;
                 tile.id = `drag-tile-${idx}`;
+                
+                if (item.img) {
+                    const img = document.createElement('img');
+                    img.src = item.img;
+                    img.style.width = '24px';
+                    img.style.height = '24px';
+                    img.style.objectFit = 'contain';
+                    img.style.borderRadius = '4px';
+                    tile.appendChild(img);
+                } else if (item.emoji) {
+                    const em = document.createElement('span');
+                    em.innerText = item.emoji;
+                    em.style.fontSize = '20px';
+                    tile.appendChild(em);
+                }
+                
+                const labelSpan = document.createElement('span');
+                labelSpan.innerText = item.label;
+                tile.appendChild(labelSpan);
                 
                 tile.ondragstart = (e) => {
                     e.dataTransfer.setData('text/plain', tile.id);
@@ -3370,6 +3447,7 @@
                 }
             });
             selectedAnswers[currentQuestionIdx] = answerMap;
+            updateNextButtonState();
         }
 
         // 4. Voice Picture Description (Early learners)
@@ -3401,15 +3479,6 @@
                 
                 imgContainer.appendChild(img);
                 voiceBox.appendChild(imgContainer);
-                const placeholder = document.createElement('div');
-                placeholder.className = 'voice-illust-placeholder';
-                placeholder.innerHTML = `<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); margin-bottom: 8px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>`;
-                
-                const sub = document.createElement('span');
-                sub.innerText = currentLanguage === 'en' ? 'AI Picture Target' : 'ચિત્ર નિશાન';
-                placeholder.appendChild(sub);
-                
-                voiceBox.appendChild(placeholder);
             }
             
             renderMicSection(q, voiceBox);
@@ -3443,7 +3512,7 @@
                     mcqDiv.querySelectorAll('.mcq-option').forEach(o => o.classList.remove('selected'));
                     box.classList.add('selected');
                     selectedAnswers[currentQuestionIdx] = opt.value;
-                    
+                    updateNextButtonState();
                     triggerOralExplain(q);
                 };
                 
@@ -3495,15 +3564,27 @@
             const seqDiv = document.createElement('div');
             seqDiv.className = 'seq-container';
             seqDiv.id = 'drag-sequence-box';
-            seqDiv.ondragover = (e) => e.preventDefault();
+            
+            // Desktop mouse-dragging sorting support
+            seqDiv.ondragover = (e) => {
+                e.preventDefault();
+                const draggingTile = seqDiv.querySelector('.dragging');
+                if (!draggingTile) return;
+                const siblings = [...seqDiv.querySelectorAll('.seq-tile:not(.dragging)')];
+                const nextSibling = siblings.find(sibling => {
+                    const rect = sibling.getBoundingClientRect();
+                    return e.clientY < rect.top + rect.height / 2;
+                });
+                if (nextSibling) {
+                    seqDiv.insertBefore(draggingTile, nextSibling);
+                } else {
+                    seqDiv.appendChild(draggingTile);
+                }
+            };
+            
             seqDiv.ondrop = (e) => {
                 e.preventDefault();
-                const id = e.dataTransfer.getData('text/plain');
-                const tile = document.getElementById(id);
-                if (tile) {
-                    seqDiv.appendChild(tile);
-                    updateSequenceAnswer(q);
-                }
+                updateSequenceAnswer(q);
             };
             
             const items = [...q.items];
@@ -3512,18 +3593,37 @@
             items.forEach((item, idx) => {
                 const tile = document.createElement('div');
                 tile.className = 'seq-tile';
+                tile.style.display = 'flex';
+                tile.style.alignItems = 'center';
+                tile.style.gap = '12px';
                 tile.draggable = true;
                 tile.id = `seq-tile-${idx}`;
                 tile.setAttribute('data-value', item.value);
                 
                 tile.ondragstart = (e) => {
                     e.dataTransfer.setData('text/plain', tile.id);
+                    tile.classList.add('dragging');
                 };
                 
-                const index = document.createElement('div');
-                index.className = 'seq-index';
-                index.innerText = idx + 1;
-                index.id = `seq-index-${idx}`;
+                tile.ondragend = (e) => {
+                    tile.classList.remove('dragging');
+                    updateSequenceAnswer(q);
+                };
+                
+                if (item.img) {
+                    const img = document.createElement('img');
+                    img.src = item.img;
+                    img.style.width = '32px';
+                    img.style.height = '32px';
+                    img.style.objectFit = 'contain';
+                    img.style.borderRadius = '6px';
+                    tile.appendChild(img);
+                } else if (item.emoji) {
+                    const em = document.createElement('span');
+                    em.innerText = item.emoji;
+                    em.style.fontSize = '24px';
+                    tile.appendChild(em);
+                }
                 
                 const txt = document.createElement('div');
                 txt.className = 'seq-text';
@@ -3533,7 +3633,6 @@
                 grip.className = 'seq-tile-grip';
                 grip.innerText = '☰';
                 
-                tile.appendChild(index);
                 tile.appendChild(txt);
                 tile.appendChild(grip);
                 
@@ -3621,12 +3720,7 @@
         }
 
         function updateSequenceIndices() {
-            const seq = document.getElementById('drag-sequence-box');
-            if (!seq) return;
-            const indices = seq.querySelectorAll('.seq-index');
-            indices.forEach((ind, i) => {
-                ind.innerText = i + 1;
-            });
+            // No-op: serial numbers removed to prevent hinting.
         }
 
         function updateSequenceAnswer(q) {
@@ -3638,6 +3732,7 @@
                 values.push(t.getAttribute('data-value'));
             });
             selectedAnswers[currentQuestionIdx] = values;
+            updateNextButtonState();
         }
 
         // 7. Spot & Fix grammar sentence
@@ -3659,6 +3754,7 @@
                     sentenceDiv.querySelectorAll('.grammar-word').forEach(w => w.classList.remove('selected'));
                     wordBtn.classList.add('selected');
                     selectedAnswers[currentQuestionIdx] = word;
+                    updateNextButtonState();
                     
                     if (idx === q.errorWordIndex) {
                         triggerOralExplain(q);
@@ -3694,6 +3790,7 @@
                     algDiv.querySelectorAll('.algebra-step').forEach(s => s.classList.remove('selected'));
                     el.classList.add('selected');
                     selectedAnswers[currentQuestionIdx] = step.value;
+                    updateNextButtonState();
                     
                     if (!step.correct) {
                         triggerOralExplain(q);
@@ -3787,15 +3884,30 @@
             micContainer.appendChild(btn);
             micContainer.appendChild(ring);
             
+            const simBtn = document.createElement('button');
+            simBtn.className = 'btn-simulate-speech';
+            simBtn.id = 'quiz-sim-speech-btn';
+            simBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;display:block;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <span>${currentLanguage === 'en' ? 'Simulate Voice' : 'અવાજ સિમ્યુલેટ કરો'}</span>
+            `;
+            simBtn.onclick = () => simulateStudentVoice(q);
+            
             const label = document.createElement('div');
             label.className = 'voice-status-text';
+            label.id = 'voice-status-label';
             label.innerText = t('tapMic');
             
-            const transcript = document.createElement('div');
+            const transcript = document.createElement('textarea');
             transcript.className = 'transcription-box';
             transcript.id = 'transcribe-output-box';
-            transcript.innerText = "...";
-
+            transcript.placeholder = "...";
+            transcript.value = "";
+            transcript.oninput = () => {
+                selectedAnswers[currentQuestionIdx] = transcript.value;
+                updateNextButtonState();
+            };
+            
             const submitSRBtn = document.createElement('button');
             submitSRBtn.className = 'btn-submit-sr';
             submitSRBtn.id = 'btn-submit-sr';
@@ -3806,6 +3918,7 @@
             };
             
             container.appendChild(micContainer);
+            container.appendChild(simBtn);
             container.appendChild(label);
             container.appendChild(transcript);
             container.appendChild(submitSRBtn);
@@ -3824,12 +3937,21 @@
 
         function startVoiceRecognition(q) {
             isRecordingState = true;
+            if (simulationInterval) clearInterval(simulationInterval);
+            simulationInterval = null;
+            
             const trigger = document.getElementById('quiz-mic-trigger');
             if (trigger) trigger.classList.add('recording');
             setMascotListening(true);
             
+            const statusLabel = document.getElementById('voice-status-label');
+            if (statusLabel) {
+                statusLabel.innerText = currentLanguage === 'en' ? 'Listening... speak now' : 'સાંભળી રહ્યું છે... હવે બોલો';
+                statusLabel.classList.add('active');
+            }
+            
             const submitBtn = document.getElementById('btn-submit-sr');
-            if (submitBtn) submitBtn.style.display = 'none';
+            if (submitBtn) submitBtn.style.display = 'inline-block';
 
             playDingSound();
             
@@ -3837,8 +3959,9 @@
             if (circle) circle.style.strokeDashoffset = 276.46;
             
             let micTimeElapsed = 0;
-            const micTimeLimit = 6000;
+            const micTimeLimit = 10000;
             const intervalMs = 100;
+            let accumulatedTranscript = "";
             
             if (micCountdownInterval) clearInterval(micCountdownInterval);
             micCountdownInterval = setInterval(() => {
@@ -3854,61 +3977,108 @@
                     
                     const outputBox = document.getElementById('transcribe-output-box');
                     const ans = selectedAnswers[currentQuestionIdx];
-                    if (!ans || ans === "..." || ans === t('listening')) {
-                        triggerSimulationRescue(q, outputBox);
+                    if (ans && ans.trim() !== "" && ans.trim() !== "..." && ans.trim() !== t('listening')) {
+                        const confirmMsg = currentLanguage === 'en' 
+                            ? "Time is up! Do you want to submit this response?" 
+                            : "સમય પૂરો થઈ ગયો છે! શું તમે આ પ્રતિભાવ સબમિટ કરવા માંગો છો?";
+                        if (confirm(confirmMsg)) {
+                            submitAnswerAndNext();
+                        }
+                    } else {
+                        if (outputBox) outputBox.value = "";
+                        selectedAnswers[currentQuestionIdx] = "";
+                        updateNextButtonState();
                     }
                 }
             }, intervalMs);
             
             const outputBox = document.getElementById('transcribe-output-box');
-            if (outputBox) outputBox.innerText = t('listening');
+            if (outputBox) {
+                outputBox.value = "";
+                outputBox.placeholder = t('listening');
+                outputBox.classList.remove('has-text');
+            }
             
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (SpeechRecognition) {
                 voiceRecognition = new SpeechRecognition();
-                voiceRecognition.continuous = false;
-                voiceRecognition.interimResults = false;
+                voiceRecognition.continuous = true;  // keep listening
+                voiceRecognition.interimResults = true; // show partial results
                 voiceRecognition.lang = currentLanguage === 'gu' ? 'gu-IN' : 'en-US';
                 
                 voiceRecognition.onresult = (e) => {
-                    if (micCountdownInterval) {
-                        clearInterval(micCountdownInterval);
-                        micCountdownInterval = null;
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        const t = e.results[i][0].transcript;
+                        if (e.results[i].isFinal) {
+                            finalTranscript += t;
+                        } else {
+                            interimTranscript += t;
+                        }
                     }
-                    const result = e.results[0][0].transcript;
-                    if (outputBox) outputBox.innerText = `"${result}"`;
-                    selectedAnswers[currentQuestionIdx] = result;
                     
-                    if (submitBtn) submitBtn.style.display = 'inline-block';
+                    const displayText = (accumulatedTranscript + " " + (finalTranscript || interimTranscript)).trim();
+                    if (outputBox && displayText) {
+                        outputBox.value = displayText;
+                        outputBox.classList.add('has-text');
+                    }
+                    if (statusLabel && displayText) {
+                        statusLabel.innerText = displayText;
+                    }
                     
-                    setTimeout(() => {
-                        speakAI(currentLanguage === 'en' ? "Understood! Excellent response." : "સમજાયું! ખુબ સરસ જવાબ.");
-                    }, 400);
+                    selectedAnswers[currentQuestionIdx] = displayText;
+                    updateNextButtonState();
+                    
+                    if (finalTranscript) {
+                        accumulatedTranscript = (accumulatedTranscript + " " + finalTranscript).trim();
+                    }
                 };
                 
                 voiceRecognition.onerror = (e) => {
-                    console.error("Speech recognition error:", e);
-                    if (micCountdownInterval) {
-                        clearInterval(micCountdownInterval);
-                        micCountdownInterval = null;
+                    console.error("Speech recognition error:", e.error);
+                    if (statusLabel) {
+                        if (e.error === 'not-allowed') {
+                            statusLabel.innerText = "Mic blocked.";
+                            if (outputBox) outputBox.value = "Mic blocked. Please allow mic permission in your URL bar.";
+                        } else if (e.error === 'network') {
+                            statusLabel.innerText = "Network Error.";
+                            if (outputBox) outputBox.value = "Google Speech Recognition server connection failed. Please type your answer directly or use the 'Simulate Voice' button.";
+                        } else if (e.error === 'no-speech') {
+                            // ignore no-speech
+                        } else {
+                            statusLabel.innerText = "Error: " + e.error;
+                            if (outputBox) outputBox.value = "Error: " + e.error;
+                        }
                     }
-                    triggerSimulationRescue(q, outputBox);
                 };
                 
                 voiceRecognition.onend = () => {
-                    if (!micCountdownInterval) {
+                    if (isRecordingState && micCountdownInterval) {
+                        try {
+                            voiceRecognition.start();
+                        } catch(_) {}
+                    } else {
                         stopVoiceRecognition();
                     }
                 };
                 
-                voiceRecognition.start();
+                try {
+                    voiceRecognition.start();
+                } catch(e) {
+                    console.warn('SR start error', e);
+                }
             } else {
-                // If speech recognition not supported, let countdown simulate rescue
+                if (outputBox) outputBox.value = "Speech recognition is not supported in this browser. Please use Google Chrome.";
             }
         }
 
         function stopVoiceRecognition() {
             if (autoTranscribeTimeout) clearTimeout(autoTranscribeTimeout);
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+            }
             if (micCountdownInterval) {
                 clearInterval(micCountdownInterval);
                 micCountdownInterval = null;
@@ -3920,36 +4090,104 @@
             const mic = document.getElementById('quiz-mic-trigger');
             if (mic) mic.classList.remove('recording');
             
+            const statusLabel = document.getElementById('voice-status-label');
+            if (statusLabel) {
+                statusLabel.classList.remove('active');
+                statusLabel.innerText = currentLanguage === 'en' ? 'TAP MIC TO SPEAK' : 'બોલવા માટે MIC ટેપ કરો';
+            }
+            
             setMascotListening(false);
             
             if (voiceRecognition) {
                 try {
-                    voiceRecognition.stop();
+                    voiceRecognition.abort();
                 } catch(_) {}
                 voiceRecognition = null;
             }
         }
 
-        // SIMULATION RESCUE IN CASE SPEECH API FAILS
-        function triggerSimulationRescue(q, outputBox) {
-            if (autoTranscribeTimeout) clearTimeout(autoTranscribeTimeout);
+        function simulateStudentVoice(q) {
+            stopVoiceRecognition();
+            stopAllSpeaking();
             
-            if (outputBox) outputBox.innerText = currentLanguage === 'en' ? "Simulating student speech response..." : "વિદ્યાર્થી ભાષણ અનુકરણ શરૂ...";
+            isRecordingState = true;
+            const trigger = document.getElementById('quiz-mic-trigger');
+            if (trigger) trigger.classList.add('recording');
+            setMascotListening(true);
             
-            autoTranscribeTimeout = setTimeout(() => {
-                const simulatedAnswer = q.expected || (currentLanguage === 'en' 
-                    ? "Yes, I understand this concept. Here is my explanation." 
-                    : "હા, મને આ ખ્યાલ સમજાય છે. અહીં મારી સમજૂતી છે.");
+            const submitBtn = document.getElementById('btn-submit-sr');
+            if (submitBtn) submitBtn.style.display = 'inline-block';
+            
+            playDingSound();
+            
+            const circle = document.getElementById('mic-countdown-circle');
+            if (circle) circle.style.strokeDashoffset = 276.46;
+            
+            const outputBox = document.getElementById('transcribe-output-box');
+            const statusLabel = document.getElementById('voice-status-label');
+            if (outputBox) {
+                outputBox.value = "";
+                outputBox.placeholder = currentLanguage === 'en' ? "Simulating speech..." : "અવાજ સિમ્યુલેટ થઈ રહ્યો છે...";
+            }
+            if (statusLabel) {
+                statusLabel.innerText = currentLanguage === 'en' ? "Simulating speech..." : "અવાજ સિમ્યુલેટ થઈ રહ્યો છે...";
+                statusLabel.classList.add('active');
+            }
+            
+            const simulatedText = q.expected || (currentLanguage === 'en' 
+                ? "This is a simulated speech response demonstrating the answer." 
+                : "આ એક મોખિક જવાબ દર્શાવતો સિમ્યુલેટેડ અવાજ પ્રતિભાવ છે.");
+            
+            const words = simulatedText.split(" ");
+            let currentWordIdx = 0;
+            let currentPhrase = "";
+            
+            let micTimeElapsed = 0;
+            const micTimeLimit = 10000;
+            const intervalMs = 100;
+            
+            if (micCountdownInterval) clearInterval(micCountdownInterval);
+            micCountdownInterval = setInterval(() => {
+                micTimeElapsed += intervalMs;
+                const progress = Math.min(micTimeElapsed / micTimeLimit, 1);
+                const dashoffset = 276.46 - (progress * 276.46);
+                if (circle) circle.style.strokeDashoffset = dashoffset;
                 
-                if (outputBox) outputBox.innerText = simulatedAnswer;
-                selectedAnswers[currentQuestionIdx] = simulatedAnswer;
-                
-                const submitBtn = document.getElementById('btn-submit-sr');
-                if (submitBtn) submitBtn.style.display = 'inline-block';
-                
-                speakAI(currentLanguage === 'en' ? "Thank you! I have recorded your explanation." : "આભાર! મેં તમારી સમજૂતી રેકોર્ડ કરી છે.");
-                stopVoiceRecognition();
-            }, 3000);
+                if (micTimeElapsed >= micTimeLimit) {
+                    clearInterval(micCountdownInterval);
+                    micCountdownInterval = null;
+                    stopVoiceRecognition();
+                    
+                    const ans = selectedAnswers[currentQuestionIdx];
+                    if (ans && ans.trim() !== "" && ans.trim() !== "...") {
+                        const confirmMsg = currentLanguage === 'en' 
+                            ? "Time is up! Do you want to submit this response?" 
+                            : "સમય પૂરો થઈ ગયો છે! શું તમે આ પ્રતિભાવ સબમિટ કરવા માંગો છો?";
+                        if (confirm(confirmMsg)) {
+                            submitAnswerAndNext();
+                        }
+                    } else {
+                        if (outputBox) outputBox.value = "";
+                        selectedAnswers[currentQuestionIdx] = "";
+                        updateNextButtonState();
+                    }
+                }
+            }, intervalMs);
+            
+            if (simulationInterval) clearInterval(simulationInterval);
+            simulationInterval = setInterval(() => {
+                if (currentWordIdx < words.length && isRecordingState) {
+                    currentPhrase += (currentWordIdx === 0 ? "" : " ") + words[currentWordIdx];
+                    if (outputBox) outputBox.value = currentPhrase;
+                    if (statusLabel) statusLabel.innerText = currentPhrase;
+                    selectedAnswers[currentQuestionIdx] = currentPhrase;
+                    updateNextButtonState();
+                    currentWordIdx++;
+                } else {
+                    clearInterval(simulationInterval);
+                    simulationInterval = null;
+                }
+            }, 300);
         }
 
         // QUESTION NAVIGATION CONTROLLERS
@@ -3969,8 +4207,22 @@
         function submitAnswerAndNext() {
             const ans = selectedAnswers[currentQuestionIdx];
             if (ans === undefined || ans === "") {
-                speakAI(currentLanguage === 'en' ? "Please try the activity or record an answer before continuing!" : "કૃપા કરીને આગળ વધતા પહેલા પ્રવૃત્તિનો પ્રયાસ કરો અથવા જવાબ રેકોર્ડ કરો!");
-                setMascotText(currentLanguage === 'en' ? "Please try the activity or record an answer!" : "કૃપા કરીને પ્રવૃત્તિનો પ્રયાસ કરો અથવા જવાબ રેકોર્ડ કરો!");
+                const questionsList = quizzes[currentGradeGroup];
+                const q = questionsList ? questionsList[currentQuestionIdx] : null;
+                if (q) {
+                    let msg = "";
+                    if (q.type === 'touch-image' || q.type === 'touch-odd' || q.type === 'touch-explain') {
+                        msg = currentLanguage === 'en' ? "Select an option, or skip the question." : "વિકલ્પ પસંદ કરો, અથવા પ્રશ્ન છોડી દો.";
+                    } else if (q.type === 'drag-buckets' || q.type === 'drag-sequence' || q.type === 'drag-sequence-voice') {
+                        msg = currentLanguage === 'en' ? "Drag the items, or skip the question." : "વસ્તુઓ ખેંચો, અથવા પ્રશ્ન છોડી દો.";
+                    } else if (q.type === 'spot-fix' || q.type === 'spot-fix-math') {
+                        msg = currentLanguage === 'en' ? "Tap the correct part, or skip the question." : "સાચા ભાગ પર ટેપ કરો, અથવા પ્રશ્ન છોડી દો.";
+                    } else {
+                        msg = currentLanguage === 'en' ? "Answer the question, or skip the question." : "પ્રશ્નનો જવાબ આપો, અથવા પ્રશ્ન છોડી દો.";
+                    }
+                    speakAI(msg);
+                    setMascotText(msg);
+                }
                 return;
             }
             
@@ -3980,6 +4232,18 @@
                 renderQuestion();
             } else {
                 showCelebration();
+            }
+        }
+
+        function updateNextButtonState() {
+            const nextBtn = document.getElementById('btn-next-question');
+            if (!nextBtn) return;
+            
+            const ans = selectedAnswers[currentQuestionIdx];
+            if (ans === undefined || ans === "") {
+                nextBtn.classList.add('inactive');
+            } else {
+                nextBtn.classList.remove('inactive');
             }
         }
 
